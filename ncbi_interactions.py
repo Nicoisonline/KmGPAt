@@ -1,6 +1,7 @@
 import csv
 import urllib.request
 import sys
+import os
 
 def download_file(url, filename):
 	"""Download the file from the given URL and save it locally"""
@@ -54,6 +55,16 @@ def download_bacteria(input : str):
 		
 def main():
 	args = sys.argv[1:]
+	if os.path.exists("data") == False:
+		os.mkdir("data")
+		os.mkdir("data/protseq")
+		os.mkdir("data/genomes")
+	if os.path.exists("data/protseq") == False:
+		os.mkdir("data/protseq")
+	if os.path.exists("data/genomes") == False:
+		os.mkdir("data/genomes")
+	if os.path.exists("data/summary.txt") == False:
+		download_summary_bacteria()
 	if len(args) == 0:
 		print("Please provide the taxname or projectID")
 		return 0
