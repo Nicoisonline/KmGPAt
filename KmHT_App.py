@@ -61,24 +61,28 @@ class KmHT_Download(ctk.CTkToplevel):
         self.progressbar.grid(row=5, column=0, sticky = "sw")
 
     def download(self):
-        input = self.entry.get()
-        self.status.configure(text="Status: Downloading")
-        self.progressbar.start()
-        if input == "summary":
+        if hasattr(self, 'downloading') and self.downloading:
+            self.status.configure(text="Status: Download already in progress")
+            return
+
+        self.downloading = True
+        self.input_dl = ctk.StringVar(value=self.entry.get())
+        self.status.configure(text="Status: Downloading - This can take a while")
+        if self.input_dl.get() == "summary":
             print("Downloading bacteria summary")
             ncbi.download_summary_bacteria()
+            self.downloading = False
         else:
             print("Downloading bacteria data")
-            threading.Thread(target=self.download_func(input)).start()
+            self.progressbar.start()
+            thread = threading.Thread(target=self.thread_dl)
+            thread.start()
 
-        
-    def download_func(self, input):
-        ncbi.download_bacteria(input)
+    def thread_dl(self):
+        ncbi.download_bacteria(str(self.input_dl.get()))
+        self.status.configure(text="Status: Download completed")
         self.progressbar.stop()
-        self.status.configure(text="Status: Downloaded Success - Ready")
-
-        
-
+        self.downloading = False
 
 def main():
     ctk.set_appearance_mode("dark")
