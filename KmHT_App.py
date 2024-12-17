@@ -79,8 +79,10 @@ class KmHT_Download(ctk.CTkToplevel):
             thread.start()
 
     def thread_dl(self):
-        ncbi.download_bacteria(str(self.input_dl.get()))
+        res = ncbi.download_bacteria(str(self.input_dl.get()))
         self.status.configure(text="Status: Download completed")
+        if res == 2:
+            self.status.configure(text="Status: File already downloaded")
         self.progressbar.stop()
         self.downloading = False
 
