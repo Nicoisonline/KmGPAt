@@ -42,6 +42,12 @@ def bacterie_download_data(input : str):
 def download_bacteria(input : str):
 	"""Download the file from ftp given the taxname or projectID"""
 	bacteria_dl_data = bacterie_download_data(input)
+	if os.path.exists("data/protseq/" + bacteria_dl_data[1] + ".faa") == True:
+		print("Protseq file already downloaded")
+		return 2
+	if os.path.exists("data/genomes/" + bacteria_dl_data[1] + ".fna") == True:
+		print("Genomes file already downloaded")
+		return 2
 	try:
 		download_file("ftp://ftp.ncbi.nih.gov/genomes/archive/old_refseq/Bacteria/" + bacteria_dl_data[0] + "/" + bacteria_dl_data[1] + ".faa", "data/protseq/" + bacteria_dl_data[1] + ".faa")
 		print("Protseq file downloaded successfully")
