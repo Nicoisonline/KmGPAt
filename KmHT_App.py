@@ -1,7 +1,7 @@
 import customtkinter as ctk
 import ncbi_interactions as ncbi
-import time
 import threading
+import webbrowser
 
 class KmHT_App(ctk.CTk):
     def __init__(self, *args, **kwargs):
@@ -43,22 +43,31 @@ class KmHT_Download(ctk.CTkToplevel):
         self.grid_rowconfigure((0,1,2,3,4,5), weight=1)
 
         self.title = ctk.CTkLabel(self, text="Download", font=("Arial", 24))
-        self.title.grid(row=0, column=0, sticky = "sw")
+        self.title.grid(row=0, column=0, sticky = "nesw")
 
         self.text = ctk.CTkLabel(self, text="Please provide the taxname or projectID")
-        self.text.grid(row=1, column=0, sticky = "sw")
+        self.text.grid(row=1, column=0, sticky = "ew")
 
         self.entry = ctk.CTkEntry(self)
-        self.entry.grid(row=2, column=0, sticky = "sw")
+        self.entry.grid(row=2, column=0, sticky = "ew")
 
         self.bouton = ctk.CTkButton(self, text="Download", command=self.download)
-        self.bouton.grid(row=3, column=0, sticky = "sw")
+        self.bouton.grid(row=3, column=0, sticky = "")
 
-        self.status = ctk.CTkLabel(self, text="Status: Ready")
-        self.status.grid(row=4, column=0, sticky = "sw")
+        self.status = ctk.CTkLabel(self, text="Status: Ready", bg_color="grey", corner_radius=5)
+        self.status.grid(row=4, column=0, sticky = "ew")
 
         self.progressbar = ctk.CTkProgressBar(self, orientation="horizontal", mode="indeterminate")
-        self.progressbar.grid(row=5, column=0, sticky = "sw")
+        self.progressbar.grid(row=5, column=0, sticky = "ew")
+
+        self.ncbi_link = "https://ftp.ncbi.nih.gov/genomes/archive/old_refseq/Bacteria/"
+
+        self.source = ctk.CTkLabel(self, text="Source: National Center for Biotechnology Information (NCBI).\nArchive of Old RefSeq Bacterial Genomes.")
+        self.source.grid(row=6, column=0, sticky = "ew")
+
+        self.source._label.bind("<Button-1>", lambda event: webbrowser.open_new_tab(self.ncbi_link))
+        self.source._label.bind("<Enter>", lambda event: self.source.configure(font=ctk.CTkFont(underline=True), cursor="hand2"))
+        self.source._label.bind("<Leave>", lambda event: self.source.configure(font=ctk.CTkFont(underline=False), cursor="arrow"))
 
     def download(self):
         if hasattr(self, 'downloading') and self.downloading:
