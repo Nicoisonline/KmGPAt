@@ -2,6 +2,7 @@ import csv
 import urllib.request
 import sys
 import os
+import re
 
 def download_file(url, filename):
 	"""Download the file from the given URL and save it locally"""
@@ -26,7 +27,9 @@ def bacterie_download_data(input : str):
 			reader = csv.reader(f, delimiter="\t")
 			for row in reader:
 				if input in row:
-					taxname_underscore = input.replace(" ", "_")
+					motif = r"subsp\.\s+\S+ "
+					input = re.sub(motif, "", input)
+					taxname_underscore = input.replace(" str.", "").replace(" sp.", "").replace(" ", "_")
 					return taxname_underscore + "_uid" + row[4], row[0].split(".")[0]
 		print("Taxname not found in summary.txt")
 	else:
@@ -35,13 +38,16 @@ def bacterie_download_data(input : str):
 			for row in reader:
 				if input in row:
 					taxname = row[5]
-					taxname_underscore = taxname.replace(" ", "_")
+					motif = r"subsp\.\s+\S+ "
+					taxname = re.sub(motif, "", taxname)
+					taxname_underscore = taxname.replace(" str.", "").replace(" sp.", "").replace(" ", "_")
 					return taxname_underscore + "_uid" + row[4], row[0].split(".")[0]
 		print("Project ID not found in summary.txt")
 		
 def download_bacteria(input : str):
 	"""Download the file from ftp given the taxname or projectID"""
 	bacteria_dl_data = bacterie_download_data(input)
+	print(bacteria_dl_data[0])
 	if os.path.exists("data/protseq/" + bacteria_dl_data[1] + ".faa") == True:
 		print("Protseq file already downloaded")
 		return 2
