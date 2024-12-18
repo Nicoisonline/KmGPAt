@@ -69,16 +69,19 @@ def download_bacteria(input : str):
 			error = 12
 		else:
 			error = 2
-	try:
-		download_file("ftp://ftp.ncbi.nih.gov/genomes/archive/old_refseq/Bacteria/" + bacteria_dl_data[0] + "/" + bacteria_dl_data[1] + ".faa", "data/protseq/" + bacteria_dl_data[1] + ".faa")
-		print("Protseq file downloaded successfully")
-	except:
-		print("Error downloading protseq file : Bacteria " + input)
-	try:
-		download_file("ftp://ftp.ncbi.nih.gov/genomes/archive/old_refseq/Bacteria/" + bacteria_dl_data[0] + "/" + bacteria_dl_data[1] + ".fna", "data/genomes/" + bacteria_dl_data[1] + ".fna")
-		print("Genome file downloaded successfully")
-	except:
-		print("Error downloading genomes file : Bacteria " + input)
+	if error !=1 and error != 12:
+		try:
+			download_file("ftp://ftp.ncbi.nih.gov/genomes/archive/old_refseq/Bacteria/" + bacteria_dl_data[0] + "/" + bacteria_dl_data[1] + ".faa", "data/protseq/" + bacteria_dl_data[1] + ".faa")
+			print("Protseq file downloaded successfully")
+		except:
+			print("Error downloading protseq file : Bacteria " + input)
+	if error !=2 and error != 12:
+		try:
+			download_file("ftp://ftp.ncbi.nih.gov/genomes/archive/old_refseq/Bacteria/" + bacteria_dl_data[0] + "/" + bacteria_dl_data[1] + ".fna", "data/genomes/" + bacteria_dl_data[1] + ".fna")
+			print("Genome file downloaded successfully")
+		except:
+			print("Error downloading genomes file : Bacteria " + input)
+	return error
 		
 def main():
 	global error
@@ -104,5 +107,6 @@ def main():
 			print("Downloading bacteria data")
 			download_bacteria(args[0])
 	return error
+
 if __name__ == "__main__":
     main()

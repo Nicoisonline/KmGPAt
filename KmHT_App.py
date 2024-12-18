@@ -80,9 +80,16 @@ class KmHT_Download(ctk.CTkToplevel):
 
     def thread_dl(self):
         res = ncbi.download_bacteria(str(self.input_dl.get()))
-        self.status.configure(text="Status: Download completed")
+        if res == -1:
+            self.status.configure(text="Status: Please provide the taxname or projectID")
+        if res == 0:
+            self.status.configure(text="Status: Download completed")
+        if res == 1:
+            self.status.configure(text="Status: Protfile already downloaded, genomes file downloaded")
         if res == 2:
-            self.status.configure(text="Status: File already downloaded")
+            self.status.configure(text="Status: Protfile downloaded, genomes file downloaded")
+        if res == 12:
+            self.status.configure(text="Status: All files already downloaded")
         self.progressbar.stop()
         self.downloading = False
 
