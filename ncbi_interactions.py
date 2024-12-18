@@ -67,6 +67,8 @@ def download_bacteria(input : str):
 		print("Genomes file already downloaded")
 		if error == 1:
 			error = 12
+		else:
+			error = 2
 	try:
 		download_file("ftp://ftp.ncbi.nih.gov/genomes/archive/old_refseq/Bacteria/" + bacteria_dl_data[0] + "/" + bacteria_dl_data[1] + ".faa", "data/protseq/" + bacteria_dl_data[1] + ".faa")
 		print("Protseq file downloaded successfully")
