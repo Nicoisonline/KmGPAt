@@ -40,7 +40,7 @@ def bacterie_download_data(input : str):
 				if input in row:
 					motif = r"subsp\.\s+\S+ "
 					input = re.sub(motif, "", input)
-					taxname_underscore = input.replace(" str.", "").replace(" sp.", "").replace(" ", "_")
+					taxname_underscore = input.replace(" str.", "").replace("-", "_").replace(" sp.", "").replace(" ", "_")
 					return taxname_underscore + "_uid" + row[4], row[0].split(".")[0]
 		print("Taxname not found in summary.txt")
 	else:
@@ -51,13 +51,25 @@ def bacterie_download_data(input : str):
 					taxname = row[5]
 					motif = r"subsp\.\s+\S+ "
 					taxname = re.sub(motif, "", taxname)
-					taxname_underscore = taxname.replace(" str.", "").replace(" sp.", "").replace(" ", "_")
+					taxname_underscore = taxname.replace(" str.", "").replace("-", "_").replace(" sp.", "").replace(" ", "_")
 					return taxname_underscore + "_uid" + row[4], row[0].split(".")[0]
 		print("Project ID not found in summary.txt")
 		
 def download_bacteria(input : str):
 	"""Download the file from ftp given the taxname or projectID"""
 	global error
+
+	if os.path.exists("data") == False:
+		os.mkdir("data")
+		os.mkdir("data/protseq")
+		os.mkdir("data/genomes")
+	if os.path.exists("data/protseq") == False:
+		os.mkdir("data/protseq")
+	if os.path.exists("data/genomes") == False:
+		os.mkdir("data/genomes")
+	if os.path.exists("data/summary.txt") == False:
+		download_summary_bacteria()
+
 	bacteria_dl_data = bacterie_download_data(input)
 	print(bacteria_dl_data[0])
 	if os.path.exists("data/protseq/" + bacteria_dl_data[1] + ".faa") == True:
@@ -88,16 +100,6 @@ def download_bacteria(input : str):
 def main():
 	global error
 	args = sys.argv[1:]
-	if os.path.exists("data") == False:
-		os.mkdir("data")
-		os.mkdir("data/protseq")
-		os.mkdir("data/genomes")
-	if os.path.exists("data/protseq") == False:
-		os.mkdir("data/protseq")
-	if os.path.exists("data/genomes") == False:
-		os.mkdir("data/genomes")
-	if os.path.exists("data/summary.txt") == False:
-		download_summary_bacteria()
 	if len(args) == 0:
 		print("Please provide the taxname or projectID")
 		return -1
