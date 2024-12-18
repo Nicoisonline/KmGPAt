@@ -4,6 +4,17 @@ import sys
 import os
 import re
 
+# This script is used to download the bacteria summary and the bacteria data from the ftp of NCBI
+
+# List of return codes:
+# -1: No argument provided
+# 0: Download successful
+# 1: Error downloading Protseq file
+# 2: Error downloading Genomes file
+# 12 : Error downloading both Protseq and Genomes files
+
+error = 0
+
 def download_file(url, filename):
 	"""Download the file from the given URL and save it locally"""
 	urllib.request.urlretrieve(url, filename)
@@ -46,14 +57,16 @@ def bacterie_download_data(input : str):
 		
 def download_bacteria(input : str):
 	"""Download the file from ftp given the taxname or projectID"""
+	global error
 	bacteria_dl_data = bacterie_download_data(input)
 	print(bacteria_dl_data[0])
 	if os.path.exists("data/protseq/" + bacteria_dl_data[1] + ".faa") == True:
 		print("Protseq file already downloaded")
-		return 2
+		error = 1
 	if os.path.exists("data/genomes/" + bacteria_dl_data[1] + ".fna") == True:
 		print("Genomes file already downloaded")
-		return 2
+		if error == 1:
+			error = 12
 	try:
 		download_file("ftp://ftp.ncbi.nih.gov/genomes/archive/old_refseq/Bacteria/" + bacteria_dl_data[0] + "/" + bacteria_dl_data[1] + ".faa", "data/protseq/" + bacteria_dl_data[1] + ".faa")
 		print("Protseq file downloaded successfully")
@@ -66,6 +79,7 @@ def download_bacteria(input : str):
 		print("Error downloading genomes file : Bacteria " + input)
 		
 def main():
+	global error
 	args = sys.argv[1:]
 	if os.path.exists("data") == False:
 		os.mkdir("data")
@@ -79,7 +93,7 @@ def main():
 		download_summary_bacteria()
 	if len(args) == 0:
 		print("Please provide the taxname or projectID")
-		return 0
+		return -1
 	else:
 		if args[0] == "summary":
 			print("Downloading bacteria summary")
@@ -87,6 +101,6 @@ def main():
 		else:
 			print("Downloading bacteria data")
 			download_bacteria(args[0])
-
+	return error
 if __name__ == "__main__":
     main()
