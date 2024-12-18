@@ -97,6 +97,8 @@ class KmHT_Download(ctk.CTkToplevel):
             self.status.configure(text="Status: Protfile already downloaded, genomes file downloaded")
         if res == 2:
             self.status.configure(text="Status: Protfile downloaded, genomes file downloaded")
+        if res == 3 or res == 4:
+            self.status.configure(text="Status: Error downloading file")
         if res == 12:
             self.status.configure(text="Status: All files already downloaded")
         self.progressbar.stop()

@@ -75,12 +75,14 @@ def download_bacteria(input : str):
 			print("Protseq file downloaded successfully")
 		except:
 			print("Error downloading protseq file : Bacteria " + input)
+			error = 3
 	if error !=2 and error != 12:
 		try:
 			download_file("ftp://ftp.ncbi.nih.gov/genomes/archive/old_refseq/Bacteria/" + bacteria_dl_data[0] + "/" + bacteria_dl_data[1] + ".fna", "data/genomes/" + bacteria_dl_data[1] + ".fna")
 			print("Genome file downloaded successfully")
 		except:
 			print("Error downloading genomes file : Bacteria " + input)
+			error = 4
 	return error
 		
 def main():
