@@ -4,6 +4,7 @@ import ncbi_interactions as ncbi
 import threading
 import webbrowser
 import os
+import kmer_test as kt
 
 class KmHT_App(ctk.CTk):
     def __init__(self, *args, **kwargs):
@@ -34,7 +35,7 @@ class KmHT_App(ctk.CTk):
         self.entry_kmer = ctk.CTkEntry(self.menu)
         self.entry_kmer.grid(row=5, column=0, sticky = "sw")
 
-        self.bouton_kmer = ctk.CTkButton(self.menu, text="Compute", command=None)
+        self.bouton_kmer = ctk.CTkButton(self.menu, text="Compute", command=self.compute_kmer)
         self.bouton_kmer.grid(row=6, column=0, sticky = "sw")
 
         self.files_menu()
@@ -54,6 +55,19 @@ class KmHT_App(ctk.CTk):
         self.windows_image.grid(row=0, column=1, sticky = "")
 
         self.mainloop()
+
+    def compute_kmer(self):
+        """Compute the kmer and display the image"""
+        if self.type.get() == "Compare":
+            print(self.file_1_combobox.get()[:-4])
+            kt.kmer_pipeline(self.file_1_combobox.get()[:-4], self.file_2_combobox.get()[:-4], int(self.entry_kmer.get()), save=True)
+        try:
+            self.image = ctk.CTkImage(Image.open("output.png"), Image.open("output.png"), size=(578, 417))
+            self.label_image.configure(image=self.image)
+        except:
+            self.label_image.configure(text="No image available")
+        if self.type.get() == "Single":
+            print("Single")
 
     def files_menu(self):
 
