@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from PIL import Image, ImageTk
 import ncbi_interactions as ncbi
 import threading
 import webbrowser
@@ -11,15 +12,31 @@ class KmHT_App(ctk.CTk):
         self.resizable(False, False)
 
         self.grid_columnconfigure((1), weight=1)
+        self.grid_rowconfigure((0), weight=1)
 
         #Menu
-        self.menutitle = ctk.CTkLabel(self, text="KmHT", font=("Arial", 24))
+        self.menu = ctk.CTkFrame(self)
+        self.menu.grid(row=0, column=0, sticky = "nsw", rowspan=1)
+        
+
+        self.menutitle = ctk.CTkLabel(self.menu, text="KmHT", font=("Arial", 24))
         self.menutitle.grid(row=0, column=0, sticky = "sw")
 
-        self.bouton_download = ctk.CTkButton(self, text="Download", command=self.open_download)
+        self.bouton_download = ctk.CTkButton(self.menu, text="Download", command=self.open_download)
         self.bouton_download.grid(row=1, column=0, sticky = "sw")
 
         self.toplevel_download = None
+
+        
+
+        #Window
+        self.windows_image = ctk.CTkFrame(self)
+
+        self.image = ctk.CTkImage(Image.open("output.png"), Image.open("output.png"), size=(578, 417))
+        self.label_image = ctk.CTkLabel(self.windows_image, image=self.image, text="")
+        self.label_image.grid(row=0, column=0)
+
+        self.windows_image.grid(row=0, column=1, sticky = "")
 
         self.mainloop()
 
