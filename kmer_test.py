@@ -45,10 +45,13 @@ def compare_kmers_graph(genome1, genome2, k):
 	# We get the kmers of size k for each genome
 	kmers1 = get_kmers(genome1, k)
 	kmers2 = get_kmers(genome2, k)
-	# We draw the histogram of the kmers
+	# We draw the histogram of the kmers with transparency
 	plt.bar(range(len(kmers1)), kmers1.values(), align='center', color='b', alpha=0.5)
 	plt.bar(range(len(kmers2)), kmers2.values(), align='center', color='r', alpha=0.5)
-	plt.xticks(range(len(kmers1)), kmers1.keys())
+	# Title
+	plt.title("Comparison of k-mers of size " + str(k))
+	# We want kmers to be displayed on the x-axis, at -90°, with smaller font
+	plt.xticks(range(len(kmers1)), kmers1.keys(), rotation=-90, fontsize=8)
 	# Add legends for colour
 	plt.legend(["NC_010163", "NC_012483"])
 	plt.show()
