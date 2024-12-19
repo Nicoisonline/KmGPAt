@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-def get_genome(genome_id):
+def get_genome_id(genome_id):
 	# We import the file and read it
 	genome = ""
 	with open("data/genomes/" + genome_id + ".fna") as f:
@@ -11,6 +11,16 @@ def get_genome(genome_id):
 	genome = "".join(genome)
 	return genome
 
+def get_genome(file):
+	# We import the file and read it
+	genome = ""
+	with open("data/genomes/" + file) as f:
+		genome = f.read()
+	# We remove the first line
+	genome = genome.split("\n")[1:]
+	# We join the lines
+	genome = "".join(genome)
+	return genome
 
 def create_dictionary(k):
 	# We create the dictionnary with all possibles k-mers A,C,G,T as keys in alphabetical order
@@ -41,7 +51,7 @@ def show_kmers(kmers):
 	plt.xticks(range(len(kmers)), kmers.keys())
 	plt.show()
 
-def compare_kmers_graph(genome1, genome2, k):
+def compare_kmers_graph(genome1, genome2, k, save=False):
 	# We get the kmers of size k for each genome
 	kmers1 = get_kmers(genome1, k)
 	kmers2 = get_kmers(genome2, k)
@@ -54,4 +64,15 @@ def compare_kmers_graph(genome1, genome2, k):
 	plt.xticks(range(len(kmers1)), kmers1.keys(), rotation=-90, fontsize=8)
 	# Add legends for colour
 	plt.legend(["NC_010163", "NC_012483"])
+
+	if save:
+		plt.savefig("output.png")
+
 	plt.show()
+
+def kmer_pipeline(file1 : str, file2 : str, k : int, save=False):
+	# We get the genomes
+	genome1 = get_genome(file1)
+	genome2 = get_genome(file2)
+	# We compare the kmers
+	compare_kmers_graph(genome1, genome2, k, save)
