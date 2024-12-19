@@ -29,16 +29,13 @@ class KmHT_App(ctk.CTk):
         self.toplevel_download = None
 
         self.label_kmer = ctk.CTkLabel(self.menu, text="Kmer size: ")
-        self.label_kmer.grid(row=3, column=0, sticky = "sw")
+        self.label_kmer.grid(row=4, column=0, sticky = "sw")
 
         self.entry_kmer = ctk.CTkEntry(self.menu)
-        self.entry_kmer.grid(row=4, column=0, sticky = "sw")
+        self.entry_kmer.grid(row=5, column=0, sticky = "sw")
 
         self.bouton_kmer = ctk.CTkButton(self.menu, text="Compute", command=None)
-        self.bouton_kmer.grid(row=5, column=0, sticky = "sw")
-        
-        self.file_1 = ctk.CTkLabel(self.menu, text="File 1: ")
-        self.file_1.grid(row=6, column=0, sticky = "sw")
+        self.bouton_kmer.grid(row=6, column=0, sticky = "sw")
 
         self.files_menu()
 
@@ -59,13 +56,121 @@ class KmHT_App(ctk.CTk):
         self.mainloop()
 
     def files_menu(self):
-        self.file_1_combobox = ctk.CTkComboBox(self.menu, values=os.listdir("data/genomes"))
-        self.file_1_combobox.grid(row=7, column=0, sticky = "sw")
 
-        self.file_2_combobox = ctk.CTkComboBox(self.menu, values=os.listdir("data/genomes"))
-        self.file_2_combobox.grid(row=8, column=0, sticky = "sw")
+        self.genomes_list = os.listdir("data/genomes")
+        self.protseq_list = os.listdir("data/protseq")
+        self.genomes_list_show = self.genomes_list.copy()
+        self.protseq_list_show = self.protseq_list.copy()
 
+        # Type
 
+        self.type = ctk.StringVar(value="Compare")
+        self.type_combobox = ctk.CTkSegmentedButton(self.menu, values=["Compare", "Single"], variable=self.type, command=self.frame_switch)
+        self.type_combobox.grid(row=2, column=0, sticky = "ew")
+
+        # Compare
+
+        self.compare_frame = ctk.CTkFrame(self.menu)
+        self.compare_frame.grid(row=3, column=0, sticky = "")
+
+        self.SegBouton_gen_prot_value = ctk.StringVar(value="Genomes")
+        self.SegBouton_gen_prot = ctk.CTkSegmentedButton(self.compare_frame, values=["Genomes", "ProtSeq"], variable=self.SegBouton_gen_prot_value, command=self.combobox_set)
+        self.SegBouton_gen_prot.grid(row=6, column=0, sticky = "")
+
+        self.searchbar_title = ctk.CTkLabel(self.compare_frame, text="Search: ")
+        self.searchbar_title.grid(row=7, column=0, sticky = "ew")
+
+        self.researchbar = ctk.CTkEntry(self.compare_frame)
+        self.researchbar.bind("<KeyRelease>", self.combobox_set)
+        self.researchbar.grid(row=8, column=0, sticky = "ew")
+
+        self.file_1_title = ctk.CTkLabel(self.compare_frame, text="File 1: ")
+        self.file_1_title.grid(row=9, column=0, sticky = "ew")
+
+        self.file_1_combobox = ctk.CTkOptionMenu(self.compare_frame, values=self.genomes_list)
+        self.file_1_combobox.grid(row=10, column=0, sticky = "")
+        #self.file_1_combobox.bind("<Enter>", lambda event: self.file_1_combobox.configure(values=os.listdir("data/genomes")))
+
+        self.file_2_title = ctk.CTkLabel(self.compare_frame, text="File 2: ")
+        self.file_2_title.grid(row=11, column=0, sticky = "ew")
+
+        self.file_2_combobox = ctk.CTkOptionMenu(self.compare_frame, values=self.genomes_list)
+        self.file_2_combobox.grid(row=12, column=0, sticky = "")
+        #self.file_2_combobox.bind("<Enter>", lambda event: self.file_2_combobox.configure(values=os.listdir("data/genomes")))
+
+        # Single
+
+        self.single_frame = ctk.CTkFrame(self.menu)
+        self.single_frame.grid(row=3, column=0, sticky = "sw")
+
+        self.SegBouton_gen_prot_value = ctk.StringVar(value="Genomes")
+        self.SegBouton_gen_prot = ctk.CTkSegmentedButton(self.single_frame, values=["Genomes", "ProtSeq"], variable=self.SegBouton_gen_prot_value, command=self.single_combobox_set)
+        self.SegBouton_gen_prot.grid(row=6, column=0, sticky = "")
+
+        self.searchbar_title = ctk.CTkLabel(self.single_frame, text="Search: ")
+        self.searchbar_title.grid(row=7, column=0, sticky = "ew")
+
+        self.researchbar = ctk.CTkEntry(self.single_frame)
+        self.researchbar.bind("<KeyRelease>", self.single_combobox_set)
+        self.researchbar.grid(row=8, column=0, sticky = "ew")
+
+        self.file_title = ctk.CTkLabel(self.single_frame, text="File: ")
+        self.file_title.grid(row=9, column=0, sticky = "ew")
+
+        self.file_combobox = ctk.CTkOptionMenu(self.single_frame, values=self.genomes_list)
+        self.file_combobox.grid(row=10, column=0, sticky = "")
+        
+        self.single_frame.grid_forget()
+
+    def frame_switch(self, event):
+        if self.type.get() == "Compare":
+            self.compare_frame.grid(row=3, column=0, sticky = "sw")
+            self.single_frame.grid_forget()
+        else:
+            self.single_frame.grid(row=3, column=0, sticky = "sw")
+            self.compare_frame.grid_forget()
+
+    def single_combobox_set(self, event):
+        # We check if the research bar is empty
+        if self.researchbar.get() == "":
+            if self.SegBouton_gen_prot_value.get() == "Genomes":
+                self.file_combobox.configure(values=self.genomes_list)
+                
+            else:
+                self.file_combobox.configure(values=self.protseq_list)
+
+        # We check if the research bar is not empty
+        else:
+            if self.SegBouton_gen_prot_value.get() == "Genomes":
+                self.genomes_list_show = [x for x in self.genomes_list if self.researchbar.get() in x]
+                self.file_combobox.configure(values=self.genomes_list_show)
+
+            else:
+                self.protseq_list_show = [x for x in self.protseq_list if self.researchbar.get() in x]
+                self.file_combobox.configure(values=self.protseq_list_show)
+
+    def combobox_set(self, event):
+        # We check if the research bar is empty
+        if self.researchbar.get() == "":
+            if self.SegBouton_gen_prot_value.get() == "Genomes":
+                self.file_1_combobox.configure(values=self.genomes_list)
+                self.file_2_combobox.configure(values=self.genomes_list)
+                
+            else:
+                self.file_1_combobox.configure(values=self.protseq_list)
+                self.file_2_combobox.configure(values=self.protseq_list)
+
+        # We check if the research bar is not empty
+        else:
+            if self.SegBouton_gen_prot_value.get() == "Genomes":
+                self.genomes_list_show = [x for x in self.genomes_list if self.researchbar.get() in x]
+                self.file_1_combobox.configure(values=self.genomes_list_show)
+                self.file_2_combobox.configure(values=self.genomes_list_show)
+
+            else:
+                self.protseq_list_show = [x for x in self.protseq_list if self.researchbar.get() in x]
+                self.file_1_combobox.configure(values=self.protseq_list_show)
+                self.file_2_combobox.configure(values=self.protseq_list_show)
 
     def open_download(self):
         if self.toplevel_download is None or not self.toplevel_download.winfo_exists():
