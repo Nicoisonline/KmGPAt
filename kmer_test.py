@@ -41,7 +41,7 @@ def get_kmers(genome, k):
 	for i in range(len(genome) - k + 1):
 		kmer = genome[i:i+k]
 		# We only take into account the kmers with A,C,G,T
-		if "N" not in kmer:
+		if kmer in kmer_dict:
 			kmer_dict[kmer] += 1
 	return kmer_dict
 
@@ -51,7 +51,7 @@ def show_kmers(kmers):
 	plt.xticks(range(len(kmers)), kmers.keys())
 	plt.show()
 
-def compare_kmers_graph(genome1, genome2, k, save=False):
+def compare_kmers_graph(genome1, genome2, k, show = False, save=False):
 	# We get the kmers of size k for each genome
 	kmers1 = get_kmers(genome1, k)
 	kmers2 = get_kmers(genome2, k)
@@ -68,11 +68,13 @@ def compare_kmers_graph(genome1, genome2, k, save=False):
 	if save:
 		plt.savefig("output.png")
 
-	plt.show()
+	if show:
+		plt.show()
 
-def kmer_pipeline(file1 : str, file2 : str, k : int, save=False):
+def kmer_pipeline(file1 : str, file2 : str, k : int, show=False, save=False):
+	#plt.ioff()
 	# We get the genomes
-	genome1 = get_genome(file1)
-	genome2 = get_genome(file2)
+	genome1 = get_genome_id(file1)
+	genome2 = get_genome_id(file2)
 	# We compare the kmers
-	compare_kmers_graph(genome1, genome2, k, save)
+	compare_kmers_graph(genome1, genome2, k, show, save)
