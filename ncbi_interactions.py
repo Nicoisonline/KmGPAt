@@ -19,8 +19,23 @@ def download_file(url, filename):
 	"""Download the file from the given URL and save it locally"""
 	urllib.request.urlretrieve(url, filename)
 
+def check_files_structure():
+	"""Check if the data folder and its subfolders exist"""
+	if os.path.exists("data") == False:
+		os.mkdir("data")
+		os.mkdir("data/protseq")
+		os.mkdir("data/genomes")
+	if os.path.exists("data/protseq") == False:
+		os.mkdir("data/protseq")
+	if os.path.exists("data/genomes") == False:
+		os.mkdir("data/genomes")
+	if os.path.exists("data/summary.txt") == False:
+		download_summary_bacteria()
+	
+
 def download_summary_bacteria():
 	"""Download the bacteria summary from ftp"""
+	check_files_structure()
 	try:
 		download_file("ftp://ftp.ncbi.nih.gov/genomes/archive/old_refseq/Bacteria/summary.txt", "data/summary.txt")
 		print("File downloaded successfully")
@@ -59,16 +74,7 @@ def download_bacteria(input : str):
 	"""Download the file from ftp given the taxname or projectID"""
 	global error
 
-	if os.path.exists("data") == False:
-		os.mkdir("data")
-		os.mkdir("data/protseq")
-		os.mkdir("data/genomes")
-	if os.path.exists("data/protseq") == False:
-		os.mkdir("data/protseq")
-	if os.path.exists("data/genomes") == False:
-		os.mkdir("data/genomes")
-	if os.path.exists("data/summary.txt") == False:
-		download_summary_bacteria()
+	check_files_structure()
 
 	bacteria_dl_data = bacterie_download_data(input)
 	print(bacteria_dl_data[0])
