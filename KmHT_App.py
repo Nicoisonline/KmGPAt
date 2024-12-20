@@ -59,7 +59,6 @@ class KmHT_App(ctk.CTk):
     def compute_kmer(self):
         """Compute the kmer and display the image"""
         if self.type.get() == "Compare":
-            print(self.file_1_combobox.get()[:-4])
             kt.kmer_pipeline(self.file_1_combobox.get()[:-4], self.file_2_combobox.get()[:-4], int(self.entry_kmer.get()), save=True)
         try:
             self.image = ctk.CTkImage(Image.open("output.png"), Image.open("output.png"), size=(578, 417))
@@ -117,16 +116,16 @@ class KmHT_App(ctk.CTk):
         self.single_frame = ctk.CTkFrame(self.menu)
         self.single_frame.grid(row=3, column=0, sticky = "sw")
 
-        self.SegBouton_gen_prot_value = ctk.StringVar(value="Genomes")
-        self.SegBouton_gen_prot = ctk.CTkSegmentedButton(self.single_frame, values=["Genomes", "ProtSeq"], variable=self.SegBouton_gen_prot_value, command=self.single_combobox_set)
-        self.SegBouton_gen_prot.grid(row=6, column=0, sticky = "")
+        self.singleSegBouton_gen_prot_value = ctk.StringVar(value="Genomes")
+        self.singleSegBouton_gen_prot = ctk.CTkSegmentedButton(self.single_frame, values=["Genomes", "ProtSeq"], variable=self.singleSegBouton_gen_prot_value, command=self.single_combobox_set)
+        self.singleSegBouton_gen_prot.grid(row=6, column=0, sticky = "")
 
-        self.searchbar_title = ctk.CTkLabel(self.single_frame, text="Search: ")
-        self.searchbar_title.grid(row=7, column=0, sticky = "ew")
+        self.single_searchbar_title = ctk.CTkLabel(self.single_frame, text="Search: ")
+        self.single_searchbar_title.grid(row=7, column=0, sticky = "ew")
 
-        self.researchbar = ctk.CTkEntry(self.single_frame)
-        self.researchbar.bind("<KeyRelease>", self.single_combobox_set)
-        self.researchbar.grid(row=8, column=0, sticky = "ew")
+        self.single_researchbar = ctk.CTkEntry(self.single_frame)
+        self.single_researchbar.bind("<KeyRelease>", self.single_combobox_set)
+        self.single_researchbar.grid(row=8, column=0, sticky = "ew")
 
         self.file_title = ctk.CTkLabel(self.single_frame, text="File: ")
         self.file_title.grid(row=9, column=0, sticky = "ew")
@@ -146,8 +145,8 @@ class KmHT_App(ctk.CTk):
 
     def single_combobox_set(self, event):
         # We check if the research bar is empty
-        if self.researchbar.get() == "":
-            if self.SegBouton_gen_prot_value.get() == "Genomes":
+        if self.single_researchbar.get() == "":
+            if self.singleSegBouton_gen_prot_value.get() == "Genomes":
                 self.file_combobox.configure(values=self.genomes_list)
                 
             else:
@@ -155,12 +154,12 @@ class KmHT_App(ctk.CTk):
 
         # We check if the research bar is not empty
         else:
-            if self.SegBouton_gen_prot_value.get() == "Genomes":
-                self.genomes_list_show = [x for x in self.genomes_list if self.researchbar.get() in x]
+            if self.singleSegBouton_gen_prot_value.get() == "Genomes":
+                self.genomes_list_show = [x for x in self.genomes_list if self.single_researchbar.get() in x]
                 self.file_combobox.configure(values=self.genomes_list_show)
 
             else:
-                self.protseq_list_show = [x for x in self.protseq_list if self.researchbar.get() in x]
+                self.protseq_list_show = [x for x in self.protseq_list if self.single_researchbar.get() in x]
                 self.file_combobox.configure(values=self.protseq_list_show)
 
     def combobox_set(self, event):
