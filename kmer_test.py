@@ -70,6 +70,7 @@ def compare_kmers_graph(genome1, genome2, k, show = False, save=False):
 
 	if show:
 		plt.show()
+	plt.close()
 
 def kmer_pipeline(file1 : str, file2 : str, k : int, show=False, save=False):
 	#plt.ioff()
