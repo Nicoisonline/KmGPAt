@@ -43,6 +43,9 @@ def get_kmers(genome, k):
 		# We only take into account the kmers with A,C,G,T
 		if kmer in kmer_dict:
 			kmer_dict[kmer] += 1
+	# For each kmer, we modify it into it's frequency
+	for kmer in kmer_dict:
+		kmer_dict[kmer] = (kmer_dict[kmer] / (len(genome) - k + 1 ))* 100
 	return kmer_dict
 
 def show_kmers(kmers):
