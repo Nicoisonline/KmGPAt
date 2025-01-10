@@ -59,7 +59,7 @@ class KmHT_App(ctk.CTk):
     def compute_kmer(self):
         """Compute the kmer and display the image"""
         if self.type.get() == "Compare":
-            kt.kmer_pipeline(self.file_1_combobox.get()[:-4], self.file_2_combobox.get()[:-4], int(self.entry_kmer.get()), save=True)
+            kt.kmer_pipeline(self.file_1_combobox.get()[:-4], self.file_2_combobox.get()[:-4], int(self.entry_kmer.get()), save=True, comparaison_mode=self.comparaison_mode.get())
         try:
             self.image = ctk.CTkImage(Image.open("output.png"), Image.open("output.png"), size=(578, 417))
             self.label_image.configure(image=self.image)
@@ -110,6 +110,9 @@ class KmHT_App(ctk.CTk):
         self.file_2_combobox = ctk.CTkOptionMenu(self.compare_frame, values=self.genomes_list)
         self.file_2_combobox.grid(row=12, column=0, sticky = "")
         #self.file_2_combobox.bind("<Enter>", lambda event: self.file_2_combobox.configure(values=os.listdir("data/genomes")))
+
+        self.comparaison_mode = ctk.CTkCheckBox(self.compare_frame, text="Switch Mode", variable=ctk.IntVar(value=0))
+        self.comparaison_mode.grid(row=13, column=0, sticky = "ew")
 
         # Single
 
