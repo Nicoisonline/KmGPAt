@@ -54,20 +54,38 @@ def show_kmers(kmers):
 	plt.xticks(range(len(kmers)), kmers.keys())
 	plt.show()
 
-def compare_kmers_graph(genome1, genome2, k, show = False, save=False):
+def compare_kmers_graph(genome1, genome2, k, show = False, save=False, comparaison_mode = 0):
 	# We get the kmers of size k for each genome
 	kmers1 = get_kmers(genome1, k)
 	kmers2 = get_kmers(genome2, k)
-	# We draw the histogram of the kmers with transparency
-	plt.bar(range(len(kmers1)), kmers1.values(), align='center', color='b', alpha=0.5)
-	plt.bar(range(len(kmers2)), kmers2.values(), align='center', color='r', alpha=0.5)
+
+	if comparaison_mode == 0:
+
+		kmer_diff_values = []
+		# We get the difference between the two genomes
+		for kmer in kmers1:
+			kmer_diff_values.append(kmers1[kmer] - kmers2[kmer])
+
+		# We draw the histogram of the difference
+		plt.bar(range(len(kmers1)), kmer_diff_values, align='center')
+
+		# We draw the histogram of the kmers with transparency
+		#plt.bar(range(len(kmers1)), kmers1.values(), align='center', color='b', alpha=0.5)
+		#plt.bar(range(len(kmers2)), kmers2.values(), align='center', color='r', alpha=0.5)
+	
+	if comparaison_mode == 1:
+		# We draw the histogram of the kmers with transparency
+		plt.bar(range(len(kmers1)), kmers1.values(), align='center', color='b', alpha=0.5)
+		plt.bar(range(len(kmers2)), kmers2.values(), align='center', color='r', alpha=0.5)
+
+		plt.legend(["NC_010163", "NC_012483"])
+
 	# Title
 	plt.title("Comparison of k-mers of size " + str(k))
 	# We want kmers to be displayed on the x-axis, at -90°, with smaller font
 	plt.xticks(range(len(kmers1)), kmers1.keys(), rotation=-90, fontsize=8)
 	# Add legends for colour
-	plt.legend(["NC_010163", "NC_012483"])
-
+	
 	if save:
 		plt.savefig("output.png")
 
@@ -75,10 +93,10 @@ def compare_kmers_graph(genome1, genome2, k, show = False, save=False):
 		plt.show()
 	plt.close()
 
-def kmer_pipeline(file1 : str, file2 : str, k : int, show=False, save=False):
+def kmer_pipeline(file1 : str, file2 : str, k : int, show=False, save=False, comparaison_mode = 0):
 	#plt.ioff()
 	# We get the genomes
 	genome1 = get_genome_id(file1)
 	genome2 = get_genome_id(file2)
 	# We compare the kmers
-	compare_kmers_graph(genome1, genome2, k, show, save)
+	compare_kmers_graph(genome1, genome2, k, show, save, comparaison_mode)
