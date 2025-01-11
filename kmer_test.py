@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 def get_genome_id(genome_id):
 	# We import the file and read it
@@ -100,3 +101,142 @@ def kmer_pipeline(file1 : str, file2 : str, k : int, show=False, save=False, com
 	genome2 = get_genome_id(file2)
 	# We compare the kmers
 	compare_kmers_graph(genome1, genome2, k, show, save, comparaison_mode)
+
+def sliding_window(seq, x, k):
+    """seq : main seq
+    x : number of windows"""
+
+    windows = []
+    window_size = len(seq) // x
+
+    for i in range(0, len(seq), window_size):
+        windows.append(seq[i:i+window_size])
+
+    #if the last window is smaller than the rest of the windows then add the rest of the sequence to the last window
+    if len(windows[-1]) < window_size/2:
+        windows[-2] += windows[-1]
+        windows.pop(-1)
+    return windows
+
+def get_windows(seq, x):
+    """seq : main seq
+    x : number of windows"""
+
+    windows = np.array_split(np.array(list(seq)), x)
+    windows = ["".join(window) for window in windows]
+
+    return windows
+
+def kmer_for_windows(seq, x, k):
+    """seq : main seq
+    x : number of windows
+    k : kmer size"""
+
+    windows = get_windows(seq, x)
+    kmers = []
+
+    for window in windows:
+        kmers.append(get_kmers(window, k))
+
+    return kmers
+
+def windows_heatmap(seq, x, k, show=False, save=False):
+	sliding = kmer_for_windows(seq, x, k)
+
+	val = [list(sliding[t].values()) for t in range(x)]
+
+	# we calculate the mean of each kmer
+	moy = [sum([val[j][i] for j in range(x)])/x for i in range(len(val[0]))]
+
+	heat = [[val[j][i]-moy[i] for i in range(len(moy))] for j in range(x)]
+
+	# we plot the heatmap x is for the number of windows
+	# y is for the number of kmers, heat is a list of list of the kmer values per window
+	heat_array = np.array(heat)
+
+	plt.imshow(heat_array.T, interpolation='nearest', aspect='auto')
+	plt.colorbar()
+
+	# We change the xticks to show the windows
+	plt.xticks(np.arange(x), np.arange(x))
+	plt.xlabel("Windows")
+
+	# We change the yticks to show the kmers
+	kmers = create_dictionary(k)
+	plt.yticks(np.arange(len(kmers)), kmers)
+	# We reduce the front size of the yticks
+	plt.yticks(fontsize=5)
+	plt.ylabel("Kmers")
+
+	plt.title("Heatmap of kmers in windows")
+
+	if save:
+		plt.savefig("output.png")
+
+	if show:
+		plt.show()
+	plt.close()
+
+def variance(seq, x, k, ctr, show=False, save=False):
+
+	sliding = kmer_for_windows(seq, x, k)
+
+	val = [list(sliding[t].values()) for t in range(x)]
+
+	comp = np.zeros((x))
+	for i in range(x):
+		for j in range(i, x, 1):
+			tmp = []
+			for v in range(len(val[0])):
+				if abs(val[i][v] - val[j][v]) > ctr:
+					tmp.append(1)
+				else :
+					tmp.append(0)
+			if sum(tmp) > 1:
+				comp[i] += 1
+				comp[j] += 1
+
+	# we plot the variance histogram
+	plt.bar(np.arange(x), comp)
+	plt.xlabel("Windows")
+	plt.xticks(np.arange(x), np.arange(x))
+	kmers = create_dictionary(k)
+
+	plt.ylabel("Number of different windows")
+	plt.yticks(np.arange(0, x, 1))
+	plt.title("Difference between windows")
+
+	if save:
+		plt.savefig("output.png")
+	if show:
+		plt.show()
+	plt.close()
+
+def kmer_single(genome : str, k : int, show=False, save=False, comparaison_mode = 0):
+	kmer_single = get_kmers(genome, k)
+	
+	plt.bar(range(len(kmer_single)), kmer_single.values(), align='center')
+	plt.title("Kmers of size " + str(k))
+	plt.xticks(range(len(kmer_single)), kmer_single.keys(), rotation=-90, fontsize=8)
+
+	if save:
+		plt.savefig("output.png")
+	plt.close()
+
+def kmer_pipeline(file1 : str, file2 : str, k : int, show=False, save=False, comparaison_mode = 0):
+	#plt.ioff()
+	# We get the genomes
+	genome1 = get_genome_id(file1)
+	genome2 = get_genome_id(file2)
+	# We compare the kmers
+	compare_kmers_graph(genome1, genome2, k, show, save, comparaison_mode)
+
+def single_pipeline(file : str, k : int, show=False, save=False, kmer_or_window = 0, window_size = 0, heatmap_or_variance = 0, variance_threshold = 0.1):
+	genome = get_genome_id(file)
+	if kmer_or_window == 0:
+		kmer_single(genome, k, show, save)
+	elif kmer_or_window == 1:
+		if heatmap_or_variance == 0:
+			windows_heatmap(genome, window_size, k, show, save)
+		elif heatmap_or_variance == 1:
+			variance(genome, window_size, k, variance_threshold, show, save)
