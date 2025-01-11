@@ -66,10 +66,27 @@ class KmHT_App(ctk.CTk):
         except:
             self.label_image.configure(text="No image available")
         if self.type.get() == "Single":
-            print("Single")
+            if self.window_or_kmer_select.get() == "Window":
+                heatmap_or_variance_int = 0
+                if self.heatmap_or_variance.get() == "Variance":
+                    heatmap_or_variance_int = 1
+                # Window
+                variance = 0.1
+                if str(self.variance_tolerance_entry.get()) != "":
+                    variance = float(str(self.variance_tolerance_entry.get()))
+                kt.single_pipeline(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=1,save=True, window_size=int(self.window_size_entry.get()), heatmap_or_variance=heatmap_or_variance_int, variance_threshold=variance)
+            else:
+                # Kmer
+                kt.single_pipeline(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=0,save=True, window_size=None, heatmap_or_variance=None)
+            try:
+                self.image = ctk.CTkImage(Image.open("output.png"), Image.open("output.png"), size=(578, 417))
+                self.label_image.configure(image=self.image)
+            except:
+                self.label_image.configure(text="No image available")
 
     def files_menu(self):
 
+        # Variables for names
         self.genomes_list = os.listdir("data/genomes")
         self.protseq_list = os.listdir("data/protseq")
         self.genomes_list_show = self.genomes_list.copy()
@@ -135,8 +152,47 @@ class KmHT_App(ctk.CTk):
 
         self.file_combobox = ctk.CTkOptionMenu(self.single_frame, values=self.genomes_list)
         self.file_combobox.grid(row=10, column=0, sticky = "")
-        
+
+        self.window_or_kmer_select = ctk.CTkSegmentedButton(self.single_frame, values=["Kmer", "Window"], variable=ctk.StringVar(value="Kmer"), command=self.window_or_kmer)
+        self.window_or_kmer_select.grid(row=11, column=0, sticky = "ew")
+
+        self.window_size = ctk.CTkLabel(self.single_frame, text="Window size: ")
+
+        self.window_size_entry = ctk.CTkEntry(self.single_frame)
+
+        self.heatmap_or_variance = ctk.CTkSegmentedButton(self.single_frame, values=["Heatmap", "Variance"], variable=ctk.StringVar(value="Heatmap"), command=self.heatmap_or_variance_function)
+
+        self.variance_tolerance = ctk.CTkLabel(self.single_frame, text="Variance tolerance: ")
+
+        self.variance_tolerance_entry = ctk.CTkEntry(self.single_frame, placeholder_text="0.1")
+
         self.single_frame.grid_forget()
+
+    def heatmap_or_variance_function(self, event):
+        if self.heatmap_or_variance.get() == "Heatmap":
+            self.variance_tolerance.grid_forget()
+            self.variance_tolerance_entry.grid_forget()
+        else:
+            self.variance_tolerance.grid(row=15, column=0, sticky = "ew")
+            self.variance_tolerance_entry.grid(row=16, column=0, sticky = "ew")
+
+    def window_or_kmer(self, event):
+        if self.window_or_kmer_select.get() == "Window":
+            self.window_size.grid(row=12, column=0, sticky = "ew")
+            self.window_size_entry.grid(row=13, column=0, sticky = "ew")
+            self.heatmap_or_variance.grid(row=14, column=0, sticky = "ew")
+        else:
+            # Kmer
+            self.entry_kmer.grid(row=5, column=0, sticky = "sw")
+            self.bouton_kmer.grid(row=6, column=0, sticky = "sw")
+            self.window_size.grid_forget()
+            self.window_size_entry.grid_forget()
+
+    def update_list(self):
+        self.genomes_list = os.listdir("data/genomes")
+        self.protseq_list = os.listdir("data/protseq")
+        self.genomes_list_show = self.genomes_list.copy()
+        self.protseq_list_show = self.protseq_list.copy()
 
     def frame_switch(self, event):
         if self.type.get() == "Compare":
@@ -147,6 +203,7 @@ class KmHT_App(ctk.CTk):
             self.compare_frame.grid_forget()
 
     def single_combobox_set(self, event):
+        self.update_list()
         # We check if the research bar is empty
         if self.single_researchbar.get() == "":
             if self.singleSegBouton_gen_prot_value.get() == "Genomes":
@@ -166,6 +223,7 @@ class KmHT_App(ctk.CTk):
                 self.file_combobox.configure(values=self.protseq_list_show)
 
     def combobox_set(self, event):
+        self.update_list()
         # We check if the research bar is empty
         if self.researchbar.get() == "":
             if self.SegBouton_gen_prot_value.get() == "Genomes":
@@ -189,6 +247,7 @@ class KmHT_App(ctk.CTk):
                 self.file_2_combobox.configure(values=self.protseq_list_show)
 
     def open_download(self):
+        self.update_list()
         if self.toplevel_download is None or not self.toplevel_download.winfo_exists():
             self.toplevel_download = KmHT_Download(self)
             self.toplevel_download.after(200, self.toplevel_download.lift)
