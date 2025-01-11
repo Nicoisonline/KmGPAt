@@ -11,7 +11,7 @@ class KmHT_App(ctk.CTk):
         super().__init__(*args, **kwargs)
         self.title('KmHT')
         self.geometry('800x600')
-        self.resizable(False, False)
+        #self.resizable(False, False)
 
         self.grid_columnconfigure((1), weight=1)
         self.grid_rowconfigure((0), weight=1)
@@ -30,13 +30,16 @@ class KmHT_App(ctk.CTk):
         self.toplevel_download = None
 
         self.label_kmer = ctk.CTkLabel(self.menu, text="Kmer size: ")
-        self.label_kmer.grid(row=4, column=0, sticky = "sw")
+        self.label_kmer.grid(row=5, column=0, sticky = "sw")
+
+        self.show_option = ctk.CTkCheckBox(self.menu, text="Show with Matplotlib", variable=ctk.IntVar(value=0))
+        self.show_option.grid(row=4, column=0, sticky = "sw")
 
         self.entry_kmer = ctk.CTkEntry(self.menu)
-        self.entry_kmer.grid(row=5, column=0, sticky = "sw")
+        self.entry_kmer.grid(row=6, column=0, sticky = "sw")
 
         self.bouton_kmer = ctk.CTkButton(self.menu, text="Compute", command=self.compute_kmer)
-        self.bouton_kmer.grid(row=6, column=0, sticky = "sw")
+        self.bouton_kmer.grid(row=7, column=0, sticky = "sw")
 
         self.files_menu()
 
@@ -58,14 +61,23 @@ class KmHT_App(ctk.CTk):
 
     def compute_kmer(self):
         """Compute the kmer and display the image"""
+        show_status = bool(self.show_option.get())
         if self.type.get() == "Compare":
-            kt.kmer_pipeline(self.file_1_combobox.get()[:-4], self.file_2_combobox.get()[:-4], int(self.entry_kmer.get()), save=True, comparaison_mode=self.comparaison_mode.get())
+            if self.SegBouton_gen_prot.get() == "Genomes":
+
+                kt.kmer_pipeline(self.file_1_combobox.get()[:-4], self.file_2_combobox.get()[:-4], int(self.entry_kmer.get()), save=True, comparaison_mode=self.comparaison_mode.get(), show=show_status)
+            else:
+                kt.kmer_pipeline_amino_acids(self.file_1_combobox.get()[:-4], self.file_2_combobox.get()[:-4], int(self.entry_kmer.get()), save=True, comparaison_mode=self.comparaison_mode.get(), show=show_status)
         try:
             self.image = ctk.CTkImage(Image.open("output.png"), Image.open("output.png"), size=(578, 417))
             self.label_image.configure(image=self.image)
         except:
             self.label_image.configure(text="No image available")
+
+
+
         if self.type.get() == "Single":
+            print(self.singleSegBouton_gen_prot_value.get())
             if self.window_or_kmer_select.get() == "Window":
                 heatmap_or_variance_int = 0
                 if self.heatmap_or_variance.get() == "Variance":
@@ -74,10 +86,22 @@ class KmHT_App(ctk.CTk):
                 variance = 0.1
                 if str(self.variance_tolerance_entry.get()) != "":
                     variance = float(str(self.variance_tolerance_entry.get()))
-                kt.single_pipeline(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=1,save=True, window_size=int(self.window_size_entry.get()), heatmap_or_variance=heatmap_or_variance_int, variance_threshold=variance)
+                if self.singleSegBouton_gen_prot_value.get() == "Genomes":
+                    kt.single_pipeline(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=1,save=True, window_size=int(self.window_size_entry.get()), heatmap_or_variance=heatmap_or_variance_int, variance_threshold=variance, show=show_status)
+                else:
+                    print(f"File: {self.file_combobox.get()[:-4]}")
+                    print(f"Kmer: {int(self.entry_kmer.get())}")
+                    print(f"Window size: {int(self.window_size_entry.get())}")
+                    print(f"Heatmap or variance: {heatmap_or_variance_int}")
+                    print(f"Variance threshold: {variance}")
+                    kt.single_pipeline_amino_acids(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=1,save=True, window_size=int(self.window_size_entry.get()), heatmap_or_variance=heatmap_or_variance_int, variance_threshold=variance, show=show_status)
             else:
                 # Kmer
-                kt.single_pipeline(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=0,save=True, window_size=None, heatmap_or_variance=None)
+                if self.singleSegBouton_gen_prot_value.get() == "Genomes":
+                    kt.single_pipeline(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=0,save=True, window_size=None, heatmap_or_variance=None, show=show_status)
+                else:
+                    print(self.singleSegBouton_gen_prot_value.get())
+                    kt.single_pipeline_amino_acids(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=0,save=True, window_size=None, heatmap_or_variance=None, show=show_status)
             try:
                 self.image = ctk.CTkImage(Image.open("output.png"), Image.open("output.png"), size=(578, 417))
                 self.label_image.configure(image=self.image)
@@ -101,7 +125,7 @@ class KmHT_App(ctk.CTk):
         # Compare
 
         self.compare_frame = ctk.CTkFrame(self.menu)
-        self.compare_frame.grid(row=3, column=0, sticky = "")
+        self.compare_frame.grid(row=3, column=0, sticky = "ew")
 
         self.SegBouton_gen_prot_value = ctk.StringVar(value="Genomes")
         self.SegBouton_gen_prot = ctk.CTkSegmentedButton(self.compare_frame, values=["Genomes", "ProtSeq"], variable=self.SegBouton_gen_prot_value, command=self.combobox_set)
@@ -187,6 +211,10 @@ class KmHT_App(ctk.CTk):
             self.bouton_kmer.grid(row=6, column=0, sticky = "sw")
             self.window_size.grid_forget()
             self.window_size_entry.grid_forget()
+            self.heatmap_or_variance.grid_forget()
+            self.variance_tolerance.grid_forget()
+            self.variance_tolerance_entry.grid_forget()
+
 
     def update_list(self):
         self.genomes_list = os.listdir("data/genomes")
