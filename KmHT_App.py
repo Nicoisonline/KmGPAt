@@ -18,28 +18,28 @@ class KmHT_App(ctk.CTk):
 
         #Menu
         self.menu = ctk.CTkFrame(self)
-        self.menu.grid(row=0, column=0, sticky = "nsw", rowspan=1)
+        self.menu.grid(row=0, column=0, sticky = "nsew", rowspan=1)
         
 
         self.menutitle = ctk.CTkLabel(self.menu, text="KmHT", font=("Arial", 24))
-        self.menutitle.grid(row=0, column=0, sticky = "sw")
+        self.menutitle.grid(row=0, column=0, sticky = "ew")
 
         self.bouton_download = ctk.CTkButton(self.menu, text="Download", command=self.open_download)
-        self.bouton_download.grid(row=1, column=0, sticky = "sw")
+        self.bouton_download.grid(row=1, column=0, sticky = "ew")
 
         self.toplevel_download = None
 
         self.label_kmer = ctk.CTkLabel(self.menu, text="Kmer size: ")
-        self.label_kmer.grid(row=5, column=0, sticky = "sw")
+        self.label_kmer.grid(row=5, column=0, sticky = "ew")
 
         self.show_option = ctk.CTkCheckBox(self.menu, text="Show with Matplotlib", variable=ctk.IntVar(value=0))
-        self.show_option.grid(row=4, column=0, sticky = "sw")
+        self.show_option.grid(row=4, column=0, sticky = "ew")
 
         self.entry_kmer = ctk.CTkEntry(self.menu)
-        self.entry_kmer.grid(row=6, column=0, sticky = "sw")
+        self.entry_kmer.grid(row=6, column=0, sticky = "ew")
 
         self.bouton_kmer = ctk.CTkButton(self.menu, text="Compute", command=self.compute_kmer)
-        self.bouton_kmer.grid(row=7, column=0, sticky = "sw")
+        self.bouton_kmer.grid(row=7, column=0, sticky = "ew")
 
         self.files_menu()
 
@@ -77,30 +77,20 @@ class KmHT_App(ctk.CTk):
 
 
         if self.type.get() == "Single":
-            print(self.singleSegBouton_gen_prot_value.get())
             if self.window_or_kmer_select.get() == "Window":
                 heatmap_or_variance_int = 0
                 if self.heatmap_or_variance.get() == "Variance":
                     heatmap_or_variance_int = 1
                 # Window
-                variance = 0.1
-                if str(self.variance_tolerance_entry.get()) != "":
-                    variance = float(str(self.variance_tolerance_entry.get()))
                 if self.singleSegBouton_gen_prot_value.get() == "Genomes":
-                    kt.single_pipeline(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=1,save=True, window_size=int(self.window_size_entry.get()), heatmap_or_variance=heatmap_or_variance_int, variance_threshold=variance, show=show_status)
+                    kt.single_pipeline(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=1,save=True, window_size=int(self.window_size_entry.get()), heatmap_or_variance=heatmap_or_variance_int, show=show_status)
                 else:
-                    print(f"File: {self.file_combobox.get()[:-4]}")
-                    print(f"Kmer: {int(self.entry_kmer.get())}")
-                    print(f"Window size: {int(self.window_size_entry.get())}")
-                    print(f"Heatmap or variance: {heatmap_or_variance_int}")
-                    print(f"Variance threshold: {variance}")
-                    kt.single_pipeline_amino_acids(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=1,save=True, window_size=int(self.window_size_entry.get()), heatmap_or_variance=heatmap_or_variance_int, variance_threshold=variance, show=show_status)
+                    kt.single_pipeline_amino_acids(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=1,save=True, window_size=int(self.window_size_entry.get()), heatmap_or_variance=heatmap_or_variance_int, show=show_status)
             else:
                 # Kmer
                 if self.singleSegBouton_gen_prot_value.get() == "Genomes":
                     kt.single_pipeline(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=0,save=True, window_size=None, heatmap_or_variance=None, show=show_status)
                 else:
-                    print(self.singleSegBouton_gen_prot_value.get())
                     kt.single_pipeline_amino_acids(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=0,save=True, window_size=None, heatmap_or_variance=None, show=show_status)
             try:
                 self.image = ctk.CTkImage(Image.open("output.png"), Image.open("output.png"), size=(578, 417))
@@ -158,7 +148,7 @@ class KmHT_App(ctk.CTk):
         # Single
 
         self.single_frame = ctk.CTkFrame(self.menu)
-        self.single_frame.grid(row=3, column=0, sticky = "sw")
+        self.single_frame.grid(row=3, column=0, sticky = "ew")
 
         self.singleSegBouton_gen_prot_value = ctk.StringVar(value="Genomes")
         self.singleSegBouton_gen_prot = ctk.CTkSegmentedButton(self.single_frame, values=["Genomes", "ProtSeq"], variable=self.singleSegBouton_gen_prot_value, command=self.single_combobox_set)
@@ -184,21 +174,9 @@ class KmHT_App(ctk.CTk):
 
         self.window_size_entry = ctk.CTkEntry(self.single_frame)
 
-        self.heatmap_or_variance = ctk.CTkSegmentedButton(self.single_frame, values=["Heatmap", "Variance"], variable=ctk.StringVar(value="Heatmap"), command=self.heatmap_or_variance_function)
-
-        self.variance_tolerance = ctk.CTkLabel(self.single_frame, text="Variance tolerance: ")
-
-        self.variance_tolerance_entry = ctk.CTkEntry(self.single_frame, placeholder_text="0.1")
+        self.heatmap_or_variance = ctk.CTkSegmentedButton(self.single_frame, values=["Heatmap", "Variance"], variable=ctk.StringVar(value="Heatmap"))
 
         self.single_frame.grid_forget()
-
-    def heatmap_or_variance_function(self, event):
-        if self.heatmap_or_variance.get() == "Heatmap":
-            self.variance_tolerance.grid_forget()
-            self.variance_tolerance_entry.grid_forget()
-        else:
-            self.variance_tolerance.grid(row=15, column=0, sticky = "ew")
-            self.variance_tolerance_entry.grid(row=16, column=0, sticky = "ew")
 
     def window_or_kmer(self, event):
         if self.window_or_kmer_select.get() == "Window":
@@ -207,13 +185,11 @@ class KmHT_App(ctk.CTk):
             self.heatmap_or_variance.grid(row=14, column=0, sticky = "ew")
         else:
             # Kmer
-            self.entry_kmer.grid(row=5, column=0, sticky = "sw")
-            self.bouton_kmer.grid(row=6, column=0, sticky = "sw")
+            #self.entry_kmer.grid(row=6, column=0, sticky = "sw")
+            #self.bouton_kmer.grid(row=7, column=0, sticky = "sw")
             self.window_size.grid_forget()
             self.window_size_entry.grid_forget()
             self.heatmap_or_variance.grid_forget()
-            self.variance_tolerance.grid_forget()
-            self.variance_tolerance_entry.grid_forget()
 
 
     def update_list(self):
