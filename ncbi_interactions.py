@@ -29,9 +29,6 @@ def check_files_structure():
 		os.mkdir("data/protseq")
 	if os.path.exists("data/genomes") == False:
 		os.mkdir("data/genomes")
-	if os.path.exists("data/summary.txt") == False:
-		download_summary_bacteria()
-	
 
 def download_summary_bacteria():
 	"""Download the bacteria summary from ftp"""
