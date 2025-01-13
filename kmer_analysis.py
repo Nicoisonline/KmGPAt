@@ -182,28 +182,18 @@ def variance(seq, x, k, ctr, show=False, save=False):
 	sliding = kmer_for_windows(seq, x, k)
 
 	val = [list(sliding[t].values()) for t in range(x)]
+	moy = [sum([val[j][i] for j in range(x)])/x for i in range(len(val[0]))]
 
-	comp = np.zeros((x))
-	for i in range(x):
-		for j in range(i, x, 1):
-			tmp = []
-			for v in range(len(val[0])):
-				if abs(val[i][v] - val[j][v]) > ctr:
-					tmp.append(1)
-				else :
-					tmp.append(0)
-			if sum(tmp) > 1:
-				comp[i] += 1
-				comp[j] += 1
+	heat = [[val[j][i]-moy[i]for i in range(len(moy))] for j in range(x)]
 
-	# we plot the variance histogram
-	plt.bar(np.arange(x), comp)
-	plt.xlabel("Windows")
-	plt.xticks(np.arange(x), np.arange(x))
-	kmers = create_dictionary(k)
+	plt.figure()
+	for k in range(len(heat)):
+		plt.plot(np.arange(len(val[k])), heat[k], label="Window " + str(k+1))
 
-	plt.ylabel("Number of different windows")
-	plt.yticks(np.arange(0, x, 1))
+	plt.xlabel("Kmers")
+	# We change the xticks to show the kmers
+	plt.xticks(np.arange(len(val[0])), sliding[0].keys(), rotation=-90, fontsize=8)
+	plt.ylabel("Difference with the mean")
 	plt.title("Difference between windows")
 
 	if save:
@@ -467,7 +457,7 @@ def variance_amino_acids(protseq_list, x, k, show=False, save=False):
 	sliding = kmer_for_windows_amino_acids(protseq_list, x, k)
 
 	val = [list(sliding[t].values()) for t in range(x)]
-	moy = [sum(t) for t in zip(*val)]
+	moy = [sum([val[j][i] for j in range(x)])/x for i in range(len(val[0]))]
 
 	heat = [[val[j][i]-moy[i]for i in range(len(moy))] for j in range(x)]
 
