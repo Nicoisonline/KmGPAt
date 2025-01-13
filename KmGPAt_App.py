@@ -295,7 +295,7 @@ class KmGPAt_Download(ctk.CTkToplevel):
         self.title = ctk.CTkLabel(self, text="Download", font=("Arial", 24))
         self.title.grid(row=0, column=0, sticky = "nesw")
 
-        self.text = ctk.CTkLabel(self, text="Please provide the taxname or projectID")
+        self.text = ctk.CTkLabel(self, text="Please provide the TaxName or Accession")
         self.text.grid(row=1, column=0, sticky = "ew")
 
         self.entry = ctk.CTkEntry(self)
