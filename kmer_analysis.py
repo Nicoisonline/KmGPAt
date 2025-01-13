@@ -55,7 +55,7 @@ def show_kmers(kmers):
 	plt.xticks(range(len(kmers)), kmers.keys())
 	plt.show()
 
-def compare_kmers_graph(genome1, genome2, k, show = False, save=False, comparaison_mode = 0):
+def compare_kmers_graph(genome1, genome2, k, show = False, save=False, comparaison_mode = 0, name1 = "", name2 = ""):
 	# We get the kmers of size k for each genome
 	kmers1 = get_kmers(genome1, k)
 	kmers2 = get_kmers(genome2, k)
@@ -82,7 +82,7 @@ def compare_kmers_graph(genome1, genome2, k, show = False, save=False, comparais
 		plt.bar(range(len(kmers1)), kmers1.values(), align='center', color='b', alpha=0.5)
 		plt.bar(range(len(kmers2)), kmers2.values(), align='center', color='r', alpha=0.5)
 
-		plt.legend(["NC_010163", "NC_012483"])
+		plt.legend([name1, name2])
 
 
 	# Title
@@ -239,7 +239,7 @@ def kmer_pipeline(file1 : str, file2 : str, k : int, show=False, save=False, com
 	genome1 = get_genome_id(file1)
 	genome2 = get_genome_id(file2)
 	# We compare the kmers
-	return compare_kmers_graph(genome1, genome2, k, show, save, comparaison_mode)
+	return compare_kmers_graph(genome1, genome2, k, show, save, comparaison_mode, file1, file2)
 
 def single_pipeline(file : str, k : int, show=False, save=False, kmer_or_window = 0, window_size = 0, heatmap_or_variance = 0, variance_threshold = 0.1):
 	genome = get_genome_id(file)
@@ -358,7 +358,7 @@ def get_kmers_amino_acids_windows(protseq_str : str, k):
 		kmer_dict[kmer] = (kmer_dict[kmer] / total_kmer ) * 100
 	return kmer_dict
 
-def compare_kmers_graph_amino_acids(genome1, genome2, k, show = False, save=False, comparaison_mode = 0):
+def compare_kmers_graph_amino_acids(genome1, genome2, k, show = False, save=False, comparaison_mode = 0, name1 = "", name2 = ""):
 	kmers1 = get_kmers_amino_acids(genome1, k)
 	kmers2 = get_kmers_amino_acids(genome2, k)
 
@@ -374,7 +374,7 @@ def compare_kmers_graph_amino_acids(genome1, genome2, k, show = False, save=Fals
 		plt.bar(range(len(kmers1)), kmers1.values(), align='center', color='b', alpha=0.5)
 		plt.bar(range(len(kmers2)), kmers2.values(), align='center', color='r', alpha=0.5)
 
-		plt.legend(["NC_010163", "NC_012483"])
+		plt.legend([name1, name2])
 
 	plt.title("Comparison of k-mers of size " + str(k))
 	plt.xticks(range(len(kmers1)), kmers1.keys(), rotation=-90, fontsize=8)
@@ -386,10 +386,12 @@ def compare_kmers_graph_amino_acids(genome1, genome2, k, show = False, save=Fals
 		plt.show()
 	plt.close()
 
+	result = [(kmer, kmer_diff_values[i]) for i, kmer in enumerate(kmers1.keys())]
+
 def kmer_pipeline_amino_acids(file1 : str, file2 : str, k : int, show=False, save=False, comparaison_mode = 0):
 	genome1 = get_protseq_id(file1)
 	genome2 = get_protseq_id(file2)
-	compare_kmers_graph_amino_acids(genome1, genome2, k, show, save, comparaison_mode)
+	compare_kmers_graph_amino_acids(genome1, genome2, k, show, save, comparaison_mode, file1, file2)
 
 def kmer_single_amino_acids(genome : str, k : int, show=False, save=False, comparaison_mode = 0):
 	kmer_single = get_kmers_amino_acids(genome, k)
