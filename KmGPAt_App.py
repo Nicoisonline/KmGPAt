@@ -10,7 +10,7 @@ class KmGPAt_App(ctk.CTk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.title('KmGPAt')
-        self.geometry('800x600')
+        self.geometry('1000x600')
         #self.resizable(False, False)
 
         self.grid_columnconfigure((1), weight=1)
@@ -57,17 +57,36 @@ class KmGPAt_App(ctk.CTk):
 
         self.windows_image.grid(row=0, column=1, sticky = "")
 
+        #Data Frame
+
+        self.data_frame()
+
         self.mainloop()
+
+    def data_frame(self):
+        self.data_frame = ctk.CTkFrame(self)
+        self.data_frame.grid(row=0, column=2, sticky = "nsew")
+
+        self.data_title = ctk.CTkLabel(self.data_frame, text="Data", font=("Arial", 24))
+        self.data_title.grid(row=0, column=0, sticky = "ew")
+
+        self.data_text = ctk.CTkTextbox(self.data_frame, height=300)
+        self.data_text.grid(row=1, column=0, sticky = "sew")
+
+    def update_data(self, data):
+        self.data_text.delete("0.0", "end")
+        self.data_text.insert("0.0", text=data)
 
     def compute_kmer(self):
         """Compute the kmer and display the image"""
         show_status = bool(self.show_option.get())
+        result = "No results available"
         if self.type.get() == "Compare":
             if self.SegBouton_gen_prot.get() == "Genomes":
 
-                kt.kmer_pipeline(self.file_1_combobox.get()[:-4], self.file_2_combobox.get()[:-4], int(self.entry_kmer.get()), save=True, comparaison_mode=self.comparaison_mode.get(), show=show_status)
+                result = kt.kmer_pipeline(self.file_1_combobox.get()[:-4], self.file_2_combobox.get()[:-4], int(self.entry_kmer.get()), save=True, comparaison_mode=self.comparaison_mode.get(), show=show_status)
             else:
-                kt.kmer_pipeline_amino_acids(self.file_1_combobox.get()[:-4], self.file_2_combobox.get()[:-4], int(self.entry_kmer.get()), save=True, comparaison_mode=self.comparaison_mode.get(), show=show_status)
+                result = kt.kmer_pipeline_amino_acids(self.file_1_combobox.get()[:-4], self.file_2_combobox.get()[:-4], int(self.entry_kmer.get()), save=True, comparaison_mode=self.comparaison_mode.get(), show=show_status)
         try:
             self.image = ctk.CTkImage(Image.open("output.png"), Image.open("output.png"), size=(578, 417))
             self.label_image.configure(image=self.image)
@@ -83,20 +102,21 @@ class KmGPAt_App(ctk.CTk):
                     heatmap_or_variance_int = 1
                 # Window
                 if self.singleSegBouton_gen_prot_value.get() == "Genomes":
-                    kt.single_pipeline(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=1,save=True, window_size=int(self.window_size_entry.get()), heatmap_or_variance=heatmap_or_variance_int, show=show_status)
+                    result = kt.single_pipeline(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=1,save=True, window_size=int(self.window_size_entry.get()), heatmap_or_variance=heatmap_or_variance_int, show=show_status)
                 else:
-                    kt.single_pipeline_amino_acids(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=1,save=True, window_size=int(self.window_size_entry.get()), heatmap_or_variance=heatmap_or_variance_int, show=show_status)
+                    result = kt.single_pipeline_amino_acids(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=1,save=True, window_size=int(self.window_size_entry.get()), heatmap_or_variance=heatmap_or_variance_int, show=show_status)
             else:
                 # Kmer
                 if self.singleSegBouton_gen_prot_value.get() == "Genomes":
-                    kt.single_pipeline(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=0,save=True, window_size=None, heatmap_or_variance=None, show=show_status)
+                    result = kt.single_pipeline(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=0,save=True, window_size=None, heatmap_or_variance=None, show=show_status)
                 else:
-                    kt.single_pipeline_amino_acids(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=0,save=True, window_size=None, heatmap_or_variance=None, show=show_status)
+                    result = kt.single_pipeline_amino_acids(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=0,save=True, window_size=None, heatmap_or_variance=None, show=show_status)
             try:
                 self.image = ctk.CTkImage(Image.open("output.png"), Image.open("output.png"), size=(578, 417))
                 self.label_image.configure(image=self.image)
             except:
                 self.label_image.configure(text="No image available")
+        self.update_data(result)
 
     def files_menu(self):
 

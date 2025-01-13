@@ -60,12 +60,15 @@ def compare_kmers_graph(genome1, genome2, k, show = False, save=False, comparais
 	kmers1 = get_kmers(genome1, k)
 	kmers2 = get_kmers(genome2, k)
 
+	kmer_diff_values = []
+
+	for kmer in kmers1:
+			kmer_diff_values.append(kmers1[kmer] - kmers2[kmer])
+
 	if comparaison_mode == 0:
 
-		kmer_diff_values = []
 		# We get the difference between the two genomes
-		for kmer in kmers1:
-			kmer_diff_values.append(kmers1[kmer] - kmers2[kmer])
+		
 
 		# We draw the histogram of the difference
 		plt.bar(range(len(kmers1)), kmer_diff_values, align='center')
@@ -81,6 +84,7 @@ def compare_kmers_graph(genome1, genome2, k, show = False, save=False, comparais
 
 		plt.legend(["NC_010163", "NC_012483"])
 
+
 	# Title
 	plt.title("Comparison of k-mers of size " + str(k))
 	# We want kmers to be displayed on the x-axis, at -90°, with smaller font
@@ -94,13 +98,19 @@ def compare_kmers_graph(genome1, genome2, k, show = False, save=False, comparais
 		plt.show()
 	plt.close()
 
-def kmer_pipeline(file1 : str, file2 : str, k : int, show=False, save=False, comparaison_mode = 0):
-	#plt.ioff()
-	# We get the genomes
-	genome1 = get_genome_id(file1)
-	genome2 = get_genome_id(file2)
-	# We compare the kmers
-	compare_kmers_graph(genome1, genome2, k, show, save, comparaison_mode)
+	# We return a list of couple of kmers and their difference
+	result = [(kmer, kmer_diff_values[i]) for i, kmer in enumerate(kmers1.keys())]
+	# We return a string of the result with "\n" as separator as format "kmer : difference"
+	return "\n".join([str(kmer) + " : " + str(diff) for kmer, diff in result])
+
+
+#def kmer_pipeline(file1 : str, file2 : str, k : int, show=False, save=False, comparaison_mode = 0):
+#	#plt.ioff()
+#	# We get the genomes
+#	genome1 = get_genome_id(file1)
+#	genome2 = get_genome_id(file2)	 
+#	# We compare the kmers
+#	compare_kmers_graph(genome1, genome2, k, show, save, comparaison_mode)
 
 def sliding_window(seq, x, k):
     """seq : main seq
@@ -177,6 +187,9 @@ def windows_heatmap(seq, x, k, show=False, save=False):
 		plt.show()
 	plt.close()
 
+	# We return the total length of the genome and the length of each windows as a string
+	return "Total length of the genome : " + str(len(seq)) + "\n" + "Length of each window : " + str(len(seq)//x)
+
 def variance(seq, x, k, ctr, show=False, save=False):
 
 	sliding = kmer_for_windows(seq, x, k)
@@ -202,6 +215,8 @@ def variance(seq, x, k, ctr, show=False, save=False):
 		plt.show()
 	plt.close()
 
+	return "Total length of the genome : " + str(len(seq)) + "\n" + "Length of each window : " + str(len(seq)//x)
+
 def kmer_single(genome : str, k : int, show=False, save=False, comparaison_mode = 0):
 	kmer_single = get_kmers(genome, k)
 	
@@ -215,23 +230,26 @@ def kmer_single(genome : str, k : int, show=False, save=False, comparaison_mode 
 		plt.show()
 	plt.close()
 
+	# We return the kmers and their frequency as a string with "\n" as separator as format "kmer : frequency"
+	return "\n".join([str(kmer) + " : " + str(freq) for kmer, freq in kmer_single.items()])
+
 def kmer_pipeline(file1 : str, file2 : str, k : int, show=False, save=False, comparaison_mode = 0):
 	#plt.ioff()
 	# We get the genomes
 	genome1 = get_genome_id(file1)
 	genome2 = get_genome_id(file2)
 	# We compare the kmers
-	compare_kmers_graph(genome1, genome2, k, show, save, comparaison_mode)
+	return compare_kmers_graph(genome1, genome2, k, show, save, comparaison_mode)
 
 def single_pipeline(file : str, k : int, show=False, save=False, kmer_or_window = 0, window_size = 0, heatmap_or_variance = 0, variance_threshold = 0.1):
 	genome = get_genome_id(file)
 	if kmer_or_window == 0:
-		kmer_single(genome, k, show, save)
+		return kmer_single(genome, k, show, save)
 	elif kmer_or_window == 1:
 		if heatmap_or_variance == 0:
-			windows_heatmap(genome, window_size, k, show, save)
+			return windows_heatmap(genome, window_size, k, show, save)
 		elif heatmap_or_variance == 1:
-			variance(genome, window_size, k, variance_threshold, show, save)
+			return variance(genome, window_size, k, variance_threshold, show, save)
 
 
 
@@ -384,6 +402,8 @@ def kmer_single_amino_acids(genome : str, k : int, show=False, save=False, compa
 		plt.savefig("output.png")
 	plt.close()
 
+	return "\n".join([str(kmer) + " : " + str(freq) for kmer, freq in kmer_single.items()])
+
 def sliding_window_amino_acids(seq, x, k):
 	"""seq : main seq
 	x : number of windows"""
@@ -452,6 +472,10 @@ def protseq_heatmap(protseq_list, x, k, show=False, save=False):
 		plt.show()
 	plt.close()
 
+	# We return the total length of the genome and the length of each windows as a string
+	seq = "".join(protseq_list)
+	return "Total length of the genome : " + str(len(seq)) + "\n" + "Length of each window : " + str(len(seq)//x)
+
 def variance_amino_acids(protseq_list, x, k, show=False, save=False):
 	
 	sliding = kmer_for_windows_amino_acids(protseq_list, x, k)
@@ -477,15 +501,18 @@ def variance_amino_acids(protseq_list, x, k, show=False, save=False):
 		plt.show()
 	plt.close()
 
+	seq = "".join(protseq_list)
+	return "Total length of the genome : " + str(len(seq)) + "\n" + "Length of each window : " + str(len(seq)//x)
+
 def single_pipeline_amino_acids(file : str, k : int, show=False, save=False, kmer_or_window = 0, window_size = 0, heatmap_or_variance = 0, variance_threshold = 0.1):
 	genome = get_protseq_id(file)
 	if kmer_or_window == 0:
-		kmer_single_amino_acids(genome, k, show, save)
+		return kmer_single_amino_acids(genome, k, show, save)
 	elif kmer_or_window == 1:
 		if heatmap_or_variance == 0:
-			protseq_heatmap(genome, window_size, k, show, save=save)
+			return protseq_heatmap(genome, window_size, k, show, save=save)
 		elif heatmap_or_variance == 1:
-			variance_amino_acids(genome, window_size, k, show, save)
+			return variance_amino_acids(genome, window_size, k, show, save)
 
 
 # Cimetiere des fonctions
