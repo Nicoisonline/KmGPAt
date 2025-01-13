@@ -222,9 +222,11 @@ class KmGPAt_App(ctk.CTk):
         if self.type.get() == "Compare":
             self.compare_frame.grid(row=3, column=0, sticky = "sw")
             self.single_frame.grid_forget()
+            self.combobox_set(None)
         else:
             self.single_frame.grid(row=3, column=0, sticky = "sw")
             self.compare_frame.grid_forget()
+            self.single_combobox_set(None)
 
     def single_combobox_set(self, event):
         self.update_list()
