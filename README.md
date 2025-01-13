@@ -1,12 +1,4 @@
-
-  _  __           _____ _____       _   
- | |/ /          / ____|  __ \ /\  | |  
- | ' / _ __ ___ | |  __| |__) /  \ | |_ 
- |  < | '_ ` _ \| | |_ |  ___/ /\ \| __|
- | . \| | | | | | |__| | |  / ____ \ |_ 
- |_|\_\_| |_| |_|\_____|_| /_/    \_\__|
-                                        
-                                        
+# KmGPAt                                        
 # Kmer Genome Proteome Analysis tool
 
 KmGPAt aims to create software enabling genome/proteome analysis using kmer.
