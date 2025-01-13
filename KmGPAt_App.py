@@ -196,13 +196,32 @@ class KmGPAt_App(ctk.CTk):
 
         self.heatmap_or_variance = ctk.CTkSegmentedButton(self.single_frame, values=["Heatmap", "Variance"], variable=ctk.StringVar(value="Heatmap"))
 
+        self.save_window_label = ctk.CTkLabel(self.single_frame, text="Save window: ")
+
+        self.window_number_label = ctk.CTkLabel(self.single_frame, text="Window number: ")
+
+        self.window_number_entry = ctk.CTkEntry(self.single_frame)
+
+        self.save_button = ctk.CTkButton(self.single_frame, text="Save", command=self.save_window)
+
         self.single_frame.grid_forget()
+
+    def save_window(self):
+        # Si génome :
+        if self.singleSegBouton_gen_prot_value.get() == "Genomes":
+            kt.save_windows(self.file_combobox.get()[:-4], int(self.window_size_entry.get()), int(self.window_number_entry.get()), genome_or_protseq=0)
+        else:
+            kt.save_windows(self.file_combobox.get()[:-4], int(self.window_size_entry.get()), int(self.window_number_entry.get()), genome_or_protseq=1)
 
     def window_or_kmer(self, event):
         if self.window_or_kmer_select.get() == "Window":
             self.window_size.grid(row=12, column=0, sticky = "ew")
             self.window_size_entry.grid(row=13, column=0, sticky = "ew")
             self.heatmap_or_variance.grid(row=14, column=0, sticky = "ew")
+            self.save_window_label.grid(row=15, column=0, sticky = "ew")
+            self.window_number_label.grid(row=16, column=0, sticky = "ew")
+            self.window_number_entry.grid(row=17, column=0, sticky = "ew")
+            self.save_button.grid(row=18, column=0, sticky = "ew")
         else:
             # Kmer
             #self.entry_kmer.grid(row=6, column=0, sticky = "sw")
@@ -210,6 +229,10 @@ class KmGPAt_App(ctk.CTk):
             self.window_size.grid_forget()
             self.window_size_entry.grid_forget()
             self.heatmap_or_variance.grid_forget()
+            self.save_window_label.grid_forget()
+            self.window_number_label.grid_forget()
+            self.window_number_entry.grid_forget()
+            self.save_button.grid_forget()
 
 
     def update_list(self):

@@ -514,6 +514,23 @@ def single_pipeline_amino_acids(file : str, k : int, show=False, save=False, kme
 		elif heatmap_or_variance == 1:
 			return variance_amino_acids(genome, window_size, k, show, save)
 
+def save_windows(file_input : str, number_of_windows : int, windows_number : int, genome_or_protseq : int):
+	"""From a file, we save the windows of the proteins in a file as : """
+
+	if genome_or_protseq == 0:
+		# Genome
+		genome = get_genome_id(file_input)
+		windows = sliding_window(genome, number_of_windows, windows_number)
+		with open("data/genomes/" + file_input + "_windows" + str(number_of_windows) + "_window" + str(windows_number) + ".fna", "w") as f:
+			f.write(">Window" + str(windows_number) + "\n" + windows[windows_number] + "\n")
+	else:
+		# Protseq
+		protseq = get_protseq_id(file_input)
+		windows = sliding_window_amino_acids(protseq, number_of_windows, windows_number)
+		with open("data/protseq/" + file_input + "_windows" + str(number_of_windows) + "_window" + str(windows_number) + ".faa", "w") as f:
+			for i, window in enumerate(windows):
+				f.write(">Window" + str(windows_number) + "\n" + windows[windows_number] + "\n")
+
 
 # Cimetiere des fonctions
 
