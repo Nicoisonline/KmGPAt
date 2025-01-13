@@ -89,7 +89,7 @@ class KmGPAt_App(ctk.CTk):
                 result = kt.kmer_pipeline_amino_acids(self.file_1_combobox.get()[:-4], self.file_2_combobox.get()[:-4], int(self.entry_kmer.get()), save=True, comparaison_mode=self.comparaison_mode.get(), show=show_status)
         try:
             self.image = ctk.CTkImage(Image.open("output.png"), Image.open("output.png"), size=(578, 417))
-            self.label_image.configure(image=self.image)
+            self.label_image.configure(image=self.image, text="")
         except:
             self.label_image.configure(text="No image available")
 
@@ -113,8 +113,7 @@ class KmGPAt_App(ctk.CTk):
                     result = kt.single_pipeline_amino_acids(self.file_combobox.get()[:-4], int(self.entry_kmer.get()), kmer_or_window=0,save=True, window_size=None, heatmap_or_variance=None, show=show_status)
             try:
                 self.image = ctk.CTkImage(Image.open("output.png"), Image.open("output.png"), size=(578, 417))
-                self.label_image.configure(image=self.image)
-                self.label_image.configure(text="")
+                self.label_image.configure(image=self.image, text="")
             except:
                 self.label_image.configure(text="No image available")
         self.update_data(result)
