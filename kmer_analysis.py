@@ -527,9 +527,13 @@ def save_windows(file_input : str, number_of_windows : int, windows_number : int
 		# Protseq
 		protseq = get_protseq_id(file_input)
 		windows = sliding_window_amino_acids(protseq, number_of_windows, windows_number)
+		
+        # For now the window of interest is a list of string, we need to convert it to a string
+		window_str = ""
+		for i in windows[windows_number]:
+			window_str += i
 		with open("data/protseq/" + file_input + "_windows" + str(number_of_windows) + "_window" + str(windows_number) + ".faa", "w") as f:
-			for i, window in enumerate(windows):
-				f.write(">Window" + str(windows_number) + "\n" + windows[windows_number] + "\n")
+			f.write(">Window" + str(windows_number) + "\n" + window_str + "\n")
 
 
 # Cimetiere des fonctions

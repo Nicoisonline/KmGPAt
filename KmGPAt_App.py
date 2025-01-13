@@ -224,8 +224,6 @@ class KmGPAt_App(ctk.CTk):
             self.save_button.grid(row=18, column=0, sticky = "ew")
         else:
             # Kmer
-            #self.entry_kmer.grid(row=6, column=0, sticky = "sw")
-            #self.bouton_kmer.grid(row=7, column=0, sticky = "sw")
             self.window_size.grid_forget()
             self.window_size_entry.grid_forget()
             self.heatmap_or_variance.grid_forget()
