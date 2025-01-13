@@ -114,6 +114,7 @@ class KmGPAt_App(ctk.CTk):
             try:
                 self.image = ctk.CTkImage(Image.open("output.png"), Image.open("output.png"), size=(578, 417))
                 self.label_image.configure(image=self.image)
+                self.label_image.configure(text="")
             except:
                 self.label_image.configure(text="No image available")
         self.update_data(result)
