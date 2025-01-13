@@ -196,7 +196,7 @@ class KmGPAt_App(ctk.CTk):
 
         self.heatmap_or_variance = ctk.CTkSegmentedButton(self.single_frame, values=["Heatmap", "Variance"], variable=ctk.StringVar(value="Heatmap"))
 
-        self.save_window_label = ctk.CTkLabel(self.single_frame, text="Save window: ")
+        self.save_window_label = ctk.CTkLabel(self.single_frame, text="Save window", font=("Arial", 12, "bold"))
 
         self.window_number_label = ctk.CTkLabel(self.single_frame, text="Window number: ")
 

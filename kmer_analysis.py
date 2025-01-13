@@ -362,11 +362,12 @@ def compare_kmers_graph_amino_acids(genome1, genome2, k, show = False, save=Fals
 	kmers1 = get_kmers_amino_acids(genome1, k)
 	kmers2 = get_kmers_amino_acids(genome2, k)
 
-	if comparaison_mode == 0:
+	kmer_diff_values = []
 
-		kmer_diff_values = []
-		for kmer in kmers1:
+	for kmer in kmers1:
 			kmer_diff_values.append(kmers1[kmer] - kmers2[kmer])
+
+	if comparaison_mode == 0:
 
 		plt.bar(range(len(kmers1)), kmer_diff_values, align='center')
 
@@ -386,12 +387,15 @@ def compare_kmers_graph_amino_acids(genome1, genome2, k, show = False, save=Fals
 		plt.show()
 	plt.close()
 
+	# We return a string of the result with "\n" as separator as format "kmer : difference"
 	result = [(kmer, kmer_diff_values[i]) for i, kmer in enumerate(kmers1.keys())]
+	return "\n".join([str(kmer) + " : " + str(diff) for kmer, diff in result])
+
 
 def kmer_pipeline_amino_acids(file1 : str, file2 : str, k : int, show=False, save=False, comparaison_mode = 0):
 	genome1 = get_protseq_id(file1)
 	genome2 = get_protseq_id(file2)
-	compare_kmers_graph_amino_acids(genome1, genome2, k, show, save, comparaison_mode, file1, file2)
+	return compare_kmers_graph_amino_acids(genome1, genome2, k, show, save, comparaison_mode, file1, file2)
 
 def kmer_single_amino_acids(genome : str, k : int, show=False, save=False, comparaison_mode = 0):
 	kmer_single = get_kmers_amino_acids(genome, k)
