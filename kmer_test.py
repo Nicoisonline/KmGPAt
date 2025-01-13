@@ -328,8 +328,26 @@ def get_kmers_amino_acids(protseq_list : list, k):
 			kmer = protseq[i:i+k]
 			if kmer in kmer_dict:
 				kmer_dict[kmer] += 1
+	# For each kmer, we modify it into it's frequency
+	total_kmer = 0
 	for kmer in kmer_dict:
-		kmer_dict[kmer] = (kmer_dict[kmer] / (len(protseq_list) - k + 1 ))* 100
+		total_kmer += kmer_dict[kmer]
+	for kmer in kmer_dict:
+		kmer_dict[kmer] = (kmer_dict[kmer] / total_kmer ) * 100
+	return kmer_dict
+
+def get_kmers_amino_acids_windows(protseq_str : str, k):
+	kmer_dict = create_dictionary_amino_acids(k)
+	for i in range(len(protseq_str) - k + 1):
+		kmer = protseq_str[i:i+k]
+		if kmer in kmer_dict:
+			kmer_dict[kmer] += 1
+	# For each kmer, we modify it into it's frequency
+	total_kmer = 0
+	for kmer in kmer_dict:
+		total_kmer += kmer_dict[kmer]
+	for kmer in kmer_dict:
+		kmer_dict[kmer] = (kmer_dict[kmer] / total_kmer ) * 100
 	return kmer_dict
 
 def compare_kmers_graph_amino_acids(genome1, genome2, k, show = False, save=False, comparaison_mode = 0):
@@ -394,7 +412,7 @@ def sliding_window_amino_acids(seq, x, k):
 def get_windows_amino_acids(seq, x):
 	"""seq : main seq
 	x : number of windows"""
-
+	
 	windows = np.array_split(np.array(list(seq)), x)
 	windows = ["".join(window) for window in windows]
 
@@ -404,12 +422,12 @@ def kmer_for_windows_amino_acids(seq, x, k):
 	"""seq : main seq
 	x : number of windows
 	k : kmer size"""
-
+	
 	windows = get_windows_amino_acids(seq, x)
 	kmers = []
 
 	for window in windows:
-		kmers.append(get_kmers_amino_acids(window, k))
+		kmers.append(get_kmers_amino_acids_windows(window, k))
 
 	return kmers
 
@@ -444,7 +462,45 @@ def protseq_heatmap(protseq_list, x, k, show=False, save=False):
 		plt.show()
 	plt.close()
 
-def variance_amino_acids(protseq_list, x, k, ctr, show=False, save=False):
+def variance_amino_acids(protseq_list, x, k, show=False, save=False):
+	
+	sliding = kmer_for_windows_amino_acids(protseq_list, x, k)
+
+	val = [list(sliding[t].values()) for t in range(x)]
+	moy = [sum(t) for t in zip(*val)]
+
+	heat = [[val[j][i]-moy[i]for i in range(len(moy))] for j in range(x)]
+
+	plt.figure()
+	for k in range(len(heat)):
+		plt.plot(np.arange(len(val[k])), heat[k], label="Window " + str(k+1))
+
+	plt.xlabel("Kmers")
+	# We change the xticks to show the kmers
+	plt.xticks(np.arange(len(val[0])), sliding[0].keys(), rotation=-90, fontsize=8)
+	plt.ylabel("Difference with the mean")
+	plt.title("Difference between windows")
+
+	if save:
+		plt.savefig("output.png")
+	if show:
+		plt.show()
+	plt.close()
+
+def single_pipeline_amino_acids(file : str, k : int, show=False, save=False, kmer_or_window = 0, window_size = 0, heatmap_or_variance = 0, variance_threshold = 0.1):
+	genome = get_protseq_id(file)
+	if kmer_or_window == 0:
+		kmer_single_amino_acids(genome, k, show, save)
+	elif kmer_or_window == 1:
+		if heatmap_or_variance == 0:
+			protseq_heatmap(genome, window_size, k, show, save=save)
+		elif heatmap_or_variance == 1:
+			variance_amino_acids(genome, window_size, k, show, save)
+
+
+# Cimetiere des fonctions
+
+def old_variance_amino_acids(protseq_list, x, k, ctr, show=False, save=False):
 	
 	sliding = kmer_for_windows_amino_acids(protseq_list, x, k)
 
@@ -477,13 +533,3 @@ def variance_amino_acids(protseq_list, x, k, ctr, show=False, save=False):
 	if show:
 		plt.show()
 	plt.close()
-
-def single_pipeline_amino_acids(file : str, k : int, show=False, save=False, kmer_or_window = 0, window_size = 0, heatmap_or_variance = 0, variance_threshold = 0.1):
-	genome = get_protseq_id(file)
-	if kmer_or_window == 0:
-		kmer_single_amino_acids(genome, k, show, save)
-	elif kmer_or_window == 1:
-		if heatmap_or_variance == 0:
-			protseq_heatmap(genome, window_size, k, show, save=save)
-		elif heatmap_or_variance == 1:
-			variance_amino_acids(genome, window_size, k, variance_threshold, show, save)
