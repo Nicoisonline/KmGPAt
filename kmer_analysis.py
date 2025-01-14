@@ -695,7 +695,7 @@ def PCA_pipeline(file : str, k : int, window_number : int, genomes_or_protseq : 
 
 	# We add the name of each windows
 	for i in range(window_number):
-		plt.text(x_pca[i,0], x_pca[i,1], "Window " + str(i+1))
+		plt.text(x_pca[i,0], x_pca[i,1], str(i))
 
 	if show:
 		plt.show()

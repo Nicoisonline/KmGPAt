@@ -211,13 +211,15 @@ class KmGPAt_App(ctk.CTk):
         self.single_frame.grid_forget()
 
     def compute_PCA(self):
-        kt.PCA_pipeline(self.file_combobox.get()[:-4], k=int(self.entry_kmer.get()), window_number=int(self.window_size_entry.get()), genomes_or_protseq=self.singleSegBouton_gen_prot.get(), show=bool(self.show_option.get()), save=True)
+        self.data_text.delete("0.0", "end")
+        kt.PCA_pipeline(file = self.file_combobox.get()[:-4], k=int(self.entry_kmer.get()), window_number=int(self.window_size_entry.get()), genomes_or_protseq=self.singleSegBouton_gen_prot.get(), show=bool(self.show_option.get()), save=True)
         # We update the image
         try:
             self.image = ctk.CTkImage(Image.open("output.png"), Image.open("output.png"), size=(578, 417))
             self.label_image.configure(image=self.image, text="")
         except:
             self.label_image.configure(text="No image available")
+        
 
     def save_window(self):
         # Si génome :
