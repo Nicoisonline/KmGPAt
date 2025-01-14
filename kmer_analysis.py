@@ -1,5 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 
 def get_genome_id(genome_id):
 	"""genome_id : str
@@ -658,6 +661,46 @@ def save_windows(file_input : str, number_of_windows : int, windows_number : int
 		with open("data/protseq/" + file_input + "_windows" + str(number_of_windows) + "_window" + str(windows_number) + ".faa", "w") as f:
 			f.write(">Window" + str(windows_number) + "\n" + window_str + "\n")
 
+def PCA_pipeline(file : str, k : int, window_number : int, genomes_or_protseq : str, show = False, save = False):
+    """file : str : The file to read
+    k : int : The size of the kmers
+    window_number : int : The number of windows
+    genomes_or_protseq : str : genomes or protseq
+    
+    Description : We apply a PCA on the kmers of the file"""
+    if genomes_or_protseq == "Genomes":
+        genome = get_genome_id(file)
+        kmers = kmer_for_windows(genome, window_number, k)
+    else:
+        protseq = get_protseq_id(file)
+        kmers = get_kmers_amino_acids(protseq, k)
+    
+    # We create a dataframe from the kmers
+    df = pd.DataFrame(kmers)
+    # We scale the data
+    scaler = StandardScaler()
+    scaler.fit(df)
+    scaled_data = scaler.transform(df)
+    # We apply the PCA
+    pca = PCA(n_components=2)
+    pca.fit(scaled_data)
+    x_pca = pca.transform(scaled_data)
+    plt.figure(figsize=(8,6))
+    plt.scatter(x_pca[:,0],x_pca[:,1])
+    plt.xlabel('First principal component')
+    plt.ylabel('Second Principal Component')
+    plt.title(f"PCA on the kmers of {file}, window number {window_number}, k = {k}")
+
+    # We add the name of each windows
+    for i in range(window_number):
+        plt.text(x_pca[i,0], x_pca[i,1], "Window " + str(i+1))
+
+    if show:
+        plt.show()
+    if save:
+        plt.savefig("output.png")
+    
+    plt.close()
 
 # Functions cemetery - OUTDATED FUNCTIONS
 
