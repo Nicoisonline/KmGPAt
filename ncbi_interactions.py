@@ -25,6 +25,7 @@ def check_files_structure():
 		os.mkdir("data")
 		os.mkdir("data/protseq")
 		os.mkdir("data/genomes")
+		download_file("ftp://ftp.ncbi.nih.gov/genomes/archive/old_refseq/Bacteria/summary.txt", "data/summary.txt")
 	if os.path.exists("data/protseq") == False:
 		os.mkdir("data/protseq")
 	if os.path.exists("data/genomes") == False:

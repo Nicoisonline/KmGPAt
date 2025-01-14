@@ -393,7 +393,9 @@ class KmGPAt_Download(ctk.CTkToplevel):
         self.downloading = False
 
 def main():
+    print("Checking files structure")
     ncbi.check_files_structure()
+    print("Launching KmGPAt")
     ctk.set_appearance_mode("dark")
     KmGPAt_App()
 
