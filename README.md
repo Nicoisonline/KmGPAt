@@ -10,6 +10,8 @@ KmGPAt aims to create a software enabling genome/proteome analysis using kmer.
     - numpy
     - customtkinker (requires tkinker)
     - PIL
+    - pandas
+    - sklearn
     - csv
     - os
     - sys
@@ -17,6 +19,24 @@ KmGPAt aims to create a software enabling genome/proteome analysis using kmer.
     - re
     - threading
     - webbrowser
+
+# Launching the software
+
+To launch the software, you must run the `KmGPAt_App.py` file.
+
+## Using the software
+
+The software offers different functionalities to analyze genomes and proteomes.
+- A download tool to download data from the NCBI database.
+- A choice between compare and single analysis.
+    - Compare analysis allows you to compare two genomes or proteomes.
+        - You can switch the representation by clicking on the "Visual Representation" button. You will have a comparison by percentage or a visual representation of the comparison.
+    - Single analysis allows you to analyze a single genome or proteome.
+        - You can obtain the kmer signature.
+        - You can obtain an alanyse by windows. You can choose the size of the number of windows. You can also choose to save a particular window. You can also run a PCA on the windows.
+            - You can change between heatmap or variance representation.
+ 
+
 
 ## Using ncbi_interactions.py as a script
 
