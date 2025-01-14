@@ -10,7 +10,7 @@ class KmGPAt_App(ctk.CTk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.title('KmGPAt')
-        self.geometry('1000x600')
+        self.geometry('1000x650')
         #self.resizable(False, False)
 
         self.grid_columnconfigure((1), weight=1)
