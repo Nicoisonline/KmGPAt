@@ -204,7 +204,20 @@ class KmGPAt_App(ctk.CTk):
 
         self.save_button = ctk.CTkButton(self.single_frame, text="Save", command=self.save_window)
 
+        self.PCA_button = ctk.CTkButton(self.single_frame, text="RunPCA", command=self.compute_PCA)
+
+        self.PCA_disclaimer = ctk.CTkLabel(self.single_frame, text="PCA - No Protseq", font=("Arial", 12, "bold"))
+
         self.single_frame.grid_forget()
+
+    def compute_PCA(self):
+        kt.PCA_pipeline(self.file_combobox.get()[:-4], k=int(self.entry_kmer.get()), window_number=int(self.window_size_entry.get()), genomes_or_protseq=self.singleSegBouton_gen_prot.get(), show=bool(self.show_option.get()), save=True)
+        # We update the image
+        try:
+            self.image = ctk.CTkImage(Image.open("output.png"), Image.open("output.png"), size=(578, 417))
+            self.label_image.configure(image=self.image, text="")
+        except:
+            self.label_image.configure(text="No image available")
 
     def save_window(self):
         # Si génome :
@@ -222,6 +235,8 @@ class KmGPAt_App(ctk.CTk):
             self.window_number_label.grid(row=16, column=0, sticky = "ew")
             self.window_number_entry.grid(row=17, column=0, sticky = "ew")
             self.save_button.grid(row=18, column=0, sticky = "ew")
+            self.PCA_button.grid(row=19, column=0, sticky = "ew")
+            self.PCA_disclaimer.grid(row=20, column=0, sticky = "ew")
         else:
             # Kmer
             self.window_size.grid_forget()
@@ -231,6 +246,8 @@ class KmGPAt_App(ctk.CTk):
             self.window_number_label.grid_forget()
             self.window_number_entry.grid_forget()
             self.save_button.grid_forget()
+            self.PCA_button.grid_forget()
+            self.PCA_disclaimer.grid_forget()
 
 
     def update_list(self):
