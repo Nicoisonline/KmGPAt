@@ -7,17 +7,17 @@ KmGPAt aims to create software enabling genome/proteome analysis using kmer.
 
 - Build in Python 3.11.9
 - Python Libraries :
-- - matplotlib
-- - numpy
-- - customtkinker (requires tkinker)
-- - PIL
-- - csv
-- - os
-- - sys
-- - urllib
-- - re
-- - threading
-- - webbrowser
+    - matplotlib
+    - numpy
+    - customtkinker (requires tkinker)
+    - PIL
+    - csv
+    - os
+    - sys
+    - urllib
+    - re
+    - threading
+    - webbrowser
 
 ## Using ncbi_interactions.py as a script
 
