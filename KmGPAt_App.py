@@ -162,7 +162,7 @@ class KmGPAt_App(ctk.CTk):
         self.file_2_combobox.grid(row=12, column=0, sticky = "")
         #self.file_2_combobox.bind("<Enter>", lambda event: self.file_2_combobox.configure(values=os.listdir("data/genomes")))
 
-        self.comparaison_mode = ctk.CTkCheckBox(self.compare_frame, text="Switch Mode", variable=ctk.IntVar(value=0))
+        self.comparaison_mode = ctk.CTkCheckBox(self.compare_frame, text="Visual Representation", variable=ctk.IntVar(value=0))
         self.comparaison_mode.grid(row=13, column=0, sticky = "ew")
 
         # Single
