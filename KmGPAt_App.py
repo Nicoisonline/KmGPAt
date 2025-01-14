@@ -11,6 +11,7 @@ class KmGPAt_App(ctk.CTk):
         super().__init__(*args, **kwargs)
         self.title('KmGPAt')
         self.geometry('1000x650')
+        self.wm_iconbitmap("res/KmGPAt_ico.ico")
         #self.resizable(False, False)
 
         self.grid_columnconfigure((1), weight=1)
