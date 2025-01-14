@@ -1,5 +1,4 @@
-# KmGPAt                                        
-# Kmer Genome Proteome Analysis tool
+# KmGPAt - Kmer Genome Proteome Analysis tool
 
 KmGPAt aims to create software enabling genome/proteome analysis using kmer.
 
