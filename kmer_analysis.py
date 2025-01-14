@@ -697,10 +697,11 @@ def PCA_pipeline(file : str, k : int, window_number : int, genomes_or_protseq : 
 	for i in range(window_number):
 		plt.text(x_pca[i,0], x_pca[i,1], str(i))
 
-	if show:
-		plt.show()
 	if save:
 		plt.savefig("output.png")
+
+	if show:
+		plt.show()
 
 	plt.close()
 
